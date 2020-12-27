@@ -1,0 +1,12 @@
+[package]
+name = "mv-mqtt-client"
+version = "0.0.1"
+authors = ["Jonas Greitemann"]
+autobins = false
+
+[dependencies]
+gio = "^0"
+gtk = "^0"
+
+[[bin]]
+name = "builders"
