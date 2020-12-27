@@ -10,8 +10,6 @@ fn build_ui(application: &gtk::Application) {
     let builder = gtk::Builder::from_file("res/ui/MainWindow.ui");
     let window : gtk::ApplicationWindow = builder.get_object("window").unwrap();
     window.set_application(Some(application));
-
-    window.show_all();
 }
 
 fn main() {

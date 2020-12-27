@@ -1,16 +1,174 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+	<requires lib="gtk+" version="3.24"/>
 	<object id="window" class="GtkApplicationWindow">
 		<property name="visible">True</property>
-		<property name="title">Machine Vision MQTT Client</property>
-		<property name="border-width">10</property>
-		<property name="default-width">350</property>
-		<property name="default-height">70</property>
+		<property name="default-width">800</property>
+		<property name="default-height">600</property>
 		<child>
-			<object id="button" class="GtkLockButton">
+			<object class="GtkStack" id="content-stack">
 				<property name="visible">True</property>
-				<property name="text-lock">Lock</property>
-				<property name="text-unlock">Unlock</property>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="label">State Machine</property>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="name">statemachine</property>
+						<property name="title" translatable="yes">State Machine</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="label">Recipes</property>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="name">recipes</property>
+						<property name="title" translatable="yes">Recipes</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="label">Result</property>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="name">result</property>
+						<property name="title" translatable="yes">Result</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+		<child type="titlebar">
+			<object class="GtkHeaderBar">
+				<property name="visible">True</property>
+				<property name="show-close-button">True</property>
+				<child type="title">
+					<object class="GtkStackSwitcher">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<property name="stack">content-stack</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<property name="spacing">6</property>
+						<child>
+							<object class="GtkComboBoxText">
+								<property name="visible">True</property>
+								<property name="active-id">None</property>
+								<items>
+									<item id="None" translatable="yes">None</item>
+									<item translatable="yes">0</item>
+									<item translatable="yes">1</item>
+									<item translatable="yes">2</item>
+								</items>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkStack" id="job-stack">
+								<property name="visible">True</property>
+								<child>
+									<object class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object class="GtkButton">
+												<property name="label" translatable="yes">1</property>
+												<property name="visible">True</property>
+											</object>
+											<packing>
+												<property name="expand">False</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkButton">
+												<property name="label" translatable="yes">C</property>
+												<property name="visible">True</property>
+											</object>
+											<packing>
+												<property name="expand">False</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<style>
+											<class name="linked"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">start-job-pane</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton">
+										<property name="label" translatable="yes">Stop</property>
+										<property name="visible">True</property>
+										<style>
+											<class name="destructive-action"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">stop-pane</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkButton">
+								<property name="label" translatable="yes">H</property>
+								<property name="visible">True</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkButton">
+								<property name="label" translatable="yes">R</property>
+								<property name="visible">True</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<style>
+							<class name="linked"/>
+						</style>
+					</object>
+					<packing>
+						<property name="pack-type">end</property>
+					</packing>
+				</child>
 			</object>
 		</child>
 	</object>

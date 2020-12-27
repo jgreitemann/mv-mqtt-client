@@ -9,4 +9,4 @@ gio = "^0"
 gtk = "^0"
 
 [[bin]]
-name = "builders"
+name = "mv_mqtt_client"
