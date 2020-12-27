@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+	<object id="window" class="GtkApplicationWindow">
+		<property name="visible">True</property>
+		<property name="title">Machine Vision MQTT Client</property>
+		<property name="border-width">10</property>
+		<property name="default-width">350</property>
+		<property name="default-height">70</property>
+		<child>
+			<object id="button" class="GtkLockButton">
+				<property name="visible">True</property>
+				<property name="text-lock">Lock</property>
+				<property name="text-unlock">Unlock</property>
+			</object>
+		</child>
+	</object>
+</interface>

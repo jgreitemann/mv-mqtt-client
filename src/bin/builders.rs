@@ -7,28 +7,16 @@ use gtk::prelude::*;
 use std::env::args;
 
 fn build_ui(application: &gtk::Application) {
-    let window = gtk::ApplicationWindowBuilder::new()
-        .application(application)
-        .title("First GTK+ Program")
-        .border_width(10)
-        .window_position(gtk::WindowPosition::Center)
-        .default_width(350)
-        .default_height(70)
-        .build();
-
-    let button = gtk::LockButtonBuilder::new()
-        .text_lock("Lock")
-        .text_unlock("Unlock")
-        .build();
-
-    window.add(&button);
+    let builder = gtk::Builder::from_file("res/ui/MainWindow.ui");
+    let window : gtk::ApplicationWindow = builder.get_object("window").unwrap();
+    window.set_application(Some(application));
 
     window.show_all();
 }
 
 fn main() {
     let application =
-        gtk::Application::new(Some("com.github.gtk-rs.examples.basic"), Default::default())
+        gtk::Application::new(Some("io.github.jgreitemann.mv-mqtt-client"), Default::default())
             .expect("Initialization failed...");
 
     application.connect_activate(|app| {
