@@ -18,6 +18,9 @@ fn main() {
             .expect("Initialization failed...");
 
     application.connect_activate(|app| {
+        let icon_theme = gtk::IconTheme::get_default().unwrap();
+        icon_theme.append_search_path("res/icons/actions");
+
         build_ui(app);
     });
 

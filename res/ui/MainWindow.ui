@@ -28,24 +28,36 @@
 										<property name="visible">True</property>
 										<child>
 											<object class="GtkButton">
-												<property name="label" translatable="yes">S</property>
 												<property name="visible">True</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">select-mode-automatic-symbolic</property>
+													</object>
+												</child>
 												<style>
 													<class name="suggested-action"/>
 												</style>
 											</object>
 											<packing>
-												<property name="expand">False</property>
+												<property name="expand">True</property>
 												<property name="fill">True</property>
 											</packing>
 										</child>
 										<child>
 											<object class="GtkButton">
-												<property name="label" translatable="yes">H</property>
 												<property name="visible">True</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">halt-symbolic</property>
+													</object>
+												</child>
 											</object>
 											<packing>
-												<property name="expand">False</property>
+												<property name="expand">True</property>
 												<property name="fill">True</property>
 											</packing>
 										</child>
@@ -60,8 +72,37 @@
 								</child>
 								<child>
 									<object class="GtkButton">
-										<property name="label" translatable="yes">Reset</property>
 										<property name="visible">True</property>
+										<child>
+											<object class="GtkBox">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">center</property>
+												<property name="spacing">4</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">system-log-out-symbolic</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Reset</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+											</object>
+										</child>
 										<style>
 											<class name="suggested-action"/>
 										</style>
@@ -73,9 +114,38 @@
 								</child>
 								<child>
 									<object class="GtkButton">
-										<property name="label" translatable="yes">Error</property>
 										<property name="visible">True</property>
 										<property name="action-name">resolve-error</property>
+										<child>
+											<object class="GtkBox">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">center</property>
+												<property name="spacing">4</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">face-uncertain-symbolic</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Error</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+											</object>
+										</child>
 										<style>
 											<class name="destructive-action"/>
 										</style>
@@ -106,8 +176,14 @@
 										</child>
 										<child>
 											<object class="GtkButton">
-												<property name="label" translatable="yes">R</property>
 												<property name="visible">True</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">system-log-out-symbolic</property>
+													</object>
+												</child>
 												<style>
 													<class name="destructive-action"/>
 												</style>
@@ -131,21 +207,31 @@
 										<property name="visible">True</property>
 										<child>
 											<object class="GtkButton">
-												<property name="label" translatable="yes">1</property>
 												<property name="visible">True</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="icon-name">start-single-job-symbolic</property>
+													</object>
+												</child>
 											</object>
 											<packing>
-												<property name="expand">False</property>
+												<property name="expand">True</property>
 												<property name="fill">True</property>
 											</packing>
 										</child>
 										<child>
 											<object class="GtkButton">
-												<property name="label" translatable="yes">C</property>
 												<property name="visible">True</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="icon-name">start-continuous-symbolic</property>
+													</object>
+												</child>
 											</object>
 											<packing>
-												<property name="expand">False</property>
+												<property name="expand">True</property>
 												<property name="fill">True</property>
 											</packing>
 										</child>
@@ -160,8 +246,37 @@
 								</child>
 								<child>
 									<object class="GtkButton">
-										<property name="label" translatable="yes">Stop</property>
 										<property name="visible">True</property>
+										<child>
+											<object class="GtkBox">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">center</property>
+												<property name="spacing">4</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">media-playback-stop-symbolic</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Stop</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+											</object>
+										</child>
 										<style>
 											<class name="destructive-action"/>
 										</style>
@@ -257,22 +372,97 @@
 				<property name="orientation">vertical</property>
 				<property name="margin">10</property>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Select Automatic Mode</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">select-mode-automatic-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Select Automatic Mode</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Reset to Preoperational</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">system-log-out-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Reset to Preoperational</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Halt</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">halt-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Halt</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
 					<object class="GtkSeparator">
@@ -298,28 +488,128 @@
 					</object>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Start Single Job</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">start-single-job-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Start Single Job</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Start Continuous Job</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">start-continuous-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Start Continuous</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Stop Current Job</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">media-playback-stop-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Stop Current Job</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 				<child>
-					<object class="GtkModelButton">
+					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">Abort Current Job</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkImage">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="icon-name">process-stop-symbolic</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkModelButton">
+								<property name="visible">True</property>
+								<property name="text" translatable="yes">Abort Current Job</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
 					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+					</packing>
 				</child>
 			</object>
 			<packing>
