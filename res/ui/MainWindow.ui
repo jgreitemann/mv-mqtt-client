@@ -5,53 +5,6 @@
 		<property name="visible">True</property>
 		<property name="default-width">800</property>
 		<property name="default-height">600</property>
-		<child>
-			<object class="GtkStack" id="content-stack">
-				<property name="visible">True</property>
-				<child>
-					<object class="GtkBox">
-						<property name="visible">True</property>
-						<child>
-							<object class="GtkLabel">
-								<property name="label">State Machine</property>
-							</object>
-						</child>
-					</object>
-					<packing>
-						<property name="name">statemachine</property>
-						<property name="title" translatable="yes">State Machine</property>
-					</packing>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="visible">True</property>
-						<child>
-							<object class="GtkLabel">
-								<property name="label">Recipes</property>
-							</object>
-						</child>
-					</object>
-					<packing>
-						<property name="name">recipes</property>
-						<property name="title" translatable="yes">Recipes</property>
-					</packing>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="visible">True</property>
-						<child>
-							<object class="GtkLabel">
-								<property name="label">Result</property>
-							</object>
-						</child>
-					</object>
-					<packing>
-						<property name="name">result</property>
-						<property name="title" translatable="yes">Result</property>
-					</packing>
-				</child>
-			</object>
-		</child>
 		<child type="titlebar">
 			<object class="GtkHeaderBar">
 				<property name="visible">True</property>
@@ -68,24 +21,111 @@
 						<property name="visible">True</property>
 						<property name="spacing">6</property>
 						<child>
-							<object class="GtkComboBoxText">
+							<object class="GtkStack" id="action-stack">
 								<property name="visible">True</property>
-								<property name="active-id">None</property>
-								<items>
-									<item id="None" translatable="yes">None</item>
-									<item translatable="yes">0</item>
-									<item translatable="yes">1</item>
-									<item translatable="yes">2</item>
-								</items>
-							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
-						</child>
-						<child>
-							<object class="GtkStack" id="job-stack">
-								<property name="visible">True</property>
+								<child>
+									<object class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object class="GtkButton">
+												<property name="label" translatable="yes">S</property>
+												<property name="visible">True</property>
+												<style>
+													<class name="suggested-action"/>
+												</style>
+											</object>
+											<packing>
+												<property name="expand">False</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkButton">
+												<property name="label" translatable="yes">H</property>
+												<property name="visible">True</property>
+											</object>
+											<packing>
+												<property name="expand">False</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<style>
+											<class name="linked"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">preoperational-pane</property>
+										<property name="title" translatable="yes">Preoperational</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton">
+										<property name="label" translatable="yes">Reset</property>
+										<property name="visible">True</property>
+										<style>
+											<class name="suggested-action"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">halted-pane</property>
+										<property name="title" translatable="yes">Halted</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton">
+										<property name="label" translatable="yes">Error</property>
+										<property name="visible">True</property>
+										<property name="action-name">resolve-error</property>
+										<style>
+											<class name="destructive-action"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">error-pane</property>
+										<property name="title" translatable="yes">Error</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkBox">
+										<property name="visible">True</property>
+										<child>
+											<object class="GtkMenuButton">
+												<property name="visible">True</property>
+												<property name="popover">recipes-popover</property>
+												<style>
+													<class name="suggested-action"/>
+												</style>
+												<child>
+													<placeholder/>
+												</child>
+											</object>
+											<packing>
+												<property name="expand">True</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkButton">
+												<property name="label" translatable="yes">R</property>
+												<property name="visible">True</property>
+												<style>
+													<class name="destructive-action"/>
+												</style>
+											</object>
+											<packing>
+												<property name="expand">False</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<style>
+											<class name="linked"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">initialized-pane</property>
+										<property name="title" translatable="yes">Initialized</property>
+									</packing>
+								</child>
 								<child>
 									<object class="GtkBox">
 										<property name="visible">True</property>
@@ -114,7 +154,8 @@
 										</style>
 									</object>
 									<packing>
-										<property name="name">start-job-pane</property>
+										<property name="name">ready-pane</property>
+										<property name="title" translatable="yes">Ready</property>
 									</packing>
 								</child>
 								<child>
@@ -126,8 +167,22 @@
 										</style>
 									</object>
 									<packing>
-										<property name="name">stop-pane</property>
+										<property name="name">execution-pane</property>
+										<property name="title" translatable="yes">*Execution</property>
 									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkMenuButton">
+								<property name="visible">True</property>
+								<property name="popover">actions-popover</property>
+								<child>
+									<placeholder/>
 								</child>
 							</object>
 							<packing>
@@ -137,37 +192,230 @@
 						</child>
 					</object>
 				</child>
+			</object>
+		</child>
+		<child>
+			<object class="GtkStack" id="content-stack">
+				<property name="visible">True</property>
 				<child>
 					<object class="GtkBox">
 						<property name="visible">True</property>
-						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkButton">
-								<property name="label" translatable="yes">H</property>
+							<object class="GtkStackSwitcher">
 								<property name="visible">True</property>
+								<property name="expand">True</property>
+								<property name="halign">center</property>
+								<property name="valign">center</property>
+								<property name="can-focus">False</property>
+								<property name="stack">action-stack</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
-						<child>
-							<object class="GtkButton">
-								<property name="label" translatable="yes">R</property>
-								<property name="visible">True</property>
-							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
-						</child>
-						<style>
-							<class name="linked"/>
-						</style>
 					</object>
 					<packing>
-						<property name="pack-type">end</property>
+						<property name="name">statemachine</property>
+						<property name="title" translatable="yes">State Machine</property>
 					</packing>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Recipes</property>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="name">recipes</property>
+						<property name="title" translatable="yes">Recipes</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="label">Result</property>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="name">result</property>
+						<property name="title" translatable="yes">Result</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+	</object>
+	<object class="GtkPopoverMenu" id="actions-popover">
+		<property name="can-focus">False</property>
+		<child>
+			<object class="GtkBox">
+				<property name="visible">True</property>
+				<property name="orientation">vertical</property>
+				<property name="margin">10</property>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Select Automatic Mode</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Reset to Preoperational</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Halt</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkSeparator">
+						<property name="visible">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="menu-name">recipes-menu</property>
+						<property name="text" translatable="yes">Prepare Recipe…</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Unprepare Recipe</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkSeparator">
+						<property name="visible">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Start Single Job</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Start Continuous Job</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Stop Current Job</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">Abort Current Job</property>
+					</object>
+				</child>
+			</object>
+			<packing>
+				<property name="submenu">actions-menu</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkBox">
+				<property name="visible">True</property>
+				<property name="orientation">vertical</property>
+				<property name="margin">10</property>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<property name="inverted">True</property>
+						<property name="menu-name">actions-menu</property>
+						<property name="text" translatable="yes">Back</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkSeparator">
+						<property name="visible">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkLabel">
+						<property name="visible">True</property>
+						<property name="margin-top">5</property>
+						<property name="margin-bottom">10</property>
+						<property name="label" translatable="yes">&lt;i&gt;Prepare Recipe:&lt;/i&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">0&lt;span foreground="#888888"&gt;: Check pen parts&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">1&lt;span foreground="#888888"&gt;: Car fuses&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">2&lt;span foreground="#888888"&gt;: daheng.mvapp&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+			</object>
+			<packing>
+				<property name="submenu">recipes-menu</property>
+			</packing>
+		</child>
+	</object>
+	<object class="GtkPopoverMenu" id="recipes-popover">
+		<property name="can-focus">False</property>
+		<child>
+			<object class="GtkBox">
+				<property name="visible">True</property>
+				<property name="orientation">vertical</property>
+				<property name="margin">10</property>
+				<child>
+					<object class="GtkLabel">
+						<property name="visible">True</property>
+						<property name="margin-bottom">10</property>
+						<property name="label" translatable="yes">&lt;i&gt;Prepare Recipe:&lt;/i&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">0&lt;span foreground="#888888"&gt;: Check pen parts&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">1&lt;span foreground="#888888"&gt;: Car fuses&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkModelButton">
+						<property name="visible">True</property>
+						<property name="text" translatable="yes">2&lt;span foreground="#888888"&gt;: daheng.mvapp&lt;/span&gt;</property>
+						<property name="use-markup">True</property>
+					</object>
 				</child>
 			</object>
 		</child>
