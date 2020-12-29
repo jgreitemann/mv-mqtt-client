@@ -21,7 +21,7 @@
 						<property name="visible">True</property>
 						<property name="spacing">6</property>
 						<child>
-							<object class="GtkStack" id="action-stack">
+							<object class="GtkStack" id="actions-stack">
 								<property name="visible">True</property>
 								<child>
 									<object class="GtkBox">
@@ -298,8 +298,52 @@
 										</style>
 									</object>
 									<packing>
-										<property name="name">execution-pane</property>
-										<property name="title" translatable="yes">*Execution</property>
+										<property name="name">singleexecution-pane</property>
+										<property name="title" translatable="yes">SingleExecution</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton">
+										<property name="visible">True</property>
+										<property name="tooltip-text" translatable="yes">Stop the current execution</property>
+										<property name="action-name">app.stop</property>
+										<child>
+											<object class="GtkBox">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">center</property>
+												<property name="spacing">4</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">media-playback-stop-symbolic</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Stop</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+													</packing>
+												</child>
+											</object>
+										</child>
+										<style>
+											<class name="destructive-action"/>
+										</style>
+									</object>
+									<packing>
+										<property name="name">continuousexecution-pane</property>
+										<property name="title" translatable="yes">ContinuousExecution</property>
 									</packing>
 								</child>
 							</object>
@@ -338,7 +382,7 @@
 								<property name="halign">center</property>
 								<property name="valign">center</property>
 								<property name="can-focus">False</property>
-								<property name="stack">action-stack</property>
+								<property name="stack">actions-stack</property>
 							</object>
 						</child>
 					</object>
@@ -668,22 +712,25 @@
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">0&lt;span foreground="#888888"&gt;: Check pen parts&lt;/span&gt;</property>
+						<property name="text" translatable="yes">0: Check pen parts</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">1&lt;span foreground="#888888"&gt;: Car fuses&lt;/span&gt;</property>
+						<property name="text" translatable="yes">1: Car fuses</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">2&lt;span foreground="#888888"&gt;: daheng.mvapp&lt;/span&gt;</property>
+						<property name="text" translatable="yes">2: daheng.mvapp</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 			</object>
@@ -710,22 +757,25 @@
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">0&lt;span foreground="#888888"&gt;: Check pen parts&lt;/span&gt;</property>
+						<property name="text" translatable="yes">0: Check pen parts</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">1&lt;span foreground="#888888"&gt;: Car fuses&lt;/span&gt;</property>
+						<property name="text" translatable="yes">1: Car fuses</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="text" translatable="yes">2&lt;span foreground="#888888"&gt;: daheng.mvapp&lt;/span&gt;</property>
+						<property name="text" translatable="yes">2: daheng.mvapp</property>
 						<property name="use-markup">True</property>
+						<property name="action-name">app.prepare_recipe</property>
 					</object>
 				</child>
 			</object>

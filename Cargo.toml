@@ -1,13 +1,19 @@
 [package]
 name = "mv-mqtt-client"
 version = "0.0.1"
-authors = ["Jonas Greitemann"]
+authors = ["Jonas Greitemann <jgreitemann@gmail.com>"]
+edition = "2018"
 autobins = false
 
 [dependencies]
-gio = "^0"
-gtk = "^0"
+gio = "0.9.1"
+gtk = "0.9.2"
 enum-map = ">=0.6.4"
+
+[lib]
+name = "mvjson"
+path = "src/mvjson/lib.rs"
 
 [[bin]]
 name = "mv_mqtt_client"
+path = "src/bin/main.rs"
