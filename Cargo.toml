@@ -9,6 +9,7 @@ autobins = false
 gio = "0.9.1"
 gtk = "0.9.2"
 enum-map = ">=0.6.4"
+itertools = "0.10.0"
 
 [lib]
 name = "mvjson"

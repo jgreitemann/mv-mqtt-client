@@ -436,7 +436,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="selectmodeautomatic-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">select-mode-automatic-symbolic</property>
@@ -468,7 +468,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="reset-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">system-log-out-symbolic</property>
@@ -500,7 +500,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="halt-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">halt-symbolic</property>
@@ -556,7 +556,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="startsinglejob-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">start-single-job-symbolic</property>
@@ -588,7 +588,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="startcontinuous-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">start-continuous-symbolic</property>
@@ -620,7 +620,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="stop-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">media-playback-stop-symbolic</property>
@@ -652,7 +652,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkImage">
+							<object class="GtkImage" id="abort-menu-icon">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="icon-name">process-stop-symbolic</property>

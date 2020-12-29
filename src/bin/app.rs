@@ -2,6 +2,7 @@ use gio::prelude::*;
 use gtk::prelude::*;
 
 use enum_map::{enum_map, EnumMap};
+use itertools::izip;
 use mvjson::{available_actions, ActionType, State};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -53,6 +54,7 @@ impl App {
 struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     actions_stack: Option<gtk::Stack>,
+    menu_icons: EnumMap<ActionType, Option<gtk::Image>>,
 }
 
 impl ApplicationController {
@@ -70,13 +72,12 @@ impl ApplicationController {
                 ActionType::Abort => gio::SimpleAction::new("abort", None)
             },
             actions_stack: None,
+            menu_icons: enum_map! {_ => None},
         };
 
         for (_, g_action) in &new.g_actions {
             map.add_action(g_action);
         }
-
-        new.change_state(State::Preoperational);
 
         return new;
     }
@@ -86,7 +87,10 @@ impl ApplicationController {
         let window: gtk::ApplicationWindow = builder.get_object("window").unwrap();
         window.set_application(Some(app));
 
-        self.actions_stack = Some(builder.get_object("actions-stack").unwrap());
+        self.actions_stack = builder.get_object("actions-stack");
+        for (atype, icon_opt) in &mut self.menu_icons {
+            *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
+        }
     }
 
     fn connect_callbacks(app: &gtk::Application, ctrl: &Rc<RefCell<ApplicationController>>) {
@@ -94,6 +98,7 @@ impl ApplicationController {
             let icon_theme = gtk::IconTheme::get_default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
             ctrl.borrow_mut().build_ui(app);
+            ctrl.borrow().change_state(State::Preoperational);
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
@@ -117,11 +122,15 @@ impl ApplicationController {
     }
 
     fn change_state(&self, to_state: State) {
-        for (allowed, g_action) in Iterator::zip(
+        for (allowed, g_action, icon_opt) in izip!(
             available_actions(to_state).values(),
             self.g_actions.values(),
+            self.menu_icons.values()
         ) {
             g_action.set_enabled(*allowed);
+            if let Some(icon) = icon_opt {
+                icon.set_opacity(if *allowed { 1.0 } else { 0.5 });
+            }
         }
 
         if let Some(stack) = &self.actions_stack {
