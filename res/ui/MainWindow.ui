@@ -29,6 +29,8 @@
 										<child>
 											<object class="GtkButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Select automatic mode</property>
+												<property name="action-name">app.select_automatic_mode</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
@@ -48,6 +50,8 @@
 										<child>
 											<object class="GtkButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Halt</property>
+												<property name="action-name">app.halt</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
@@ -73,6 +77,8 @@
 								<child>
 									<object class="GtkButton">
 										<property name="visible">True</property>
+										<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+										<property name="action-name">app.reset</property>
 										<child>
 											<object class="GtkBox">
 												<property name="visible">True</property>
@@ -115,7 +121,8 @@
 								<child>
 									<object class="GtkButton">
 										<property name="visible">True</property>
-										<property name="action-name">resolve-error</property>
+										<property name="tooltip-text" translatable="yes">An unrecoverable error has occurred</property>
+										<property name="action-name">app.resolve-error</property>
 										<child>
 											<object class="GtkBox">
 												<property name="visible">True</property>
@@ -161,6 +168,7 @@
 										<child>
 											<object class="GtkMenuButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Choose a recipe to prepare</property>
 												<property name="popover">recipes-popover</property>
 												<style>
 													<class name="suggested-action"/>
@@ -177,6 +185,8 @@
 										<child>
 											<object class="GtkButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+												<property name="action-name">app.reset</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
@@ -208,6 +218,8 @@
 										<child>
 											<object class="GtkButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Start a single job</property>
+												<property name="action-name">app.start_single_job</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
@@ -223,6 +235,8 @@
 										<child>
 											<object class="GtkButton">
 												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Start a continuous execution</property>
+												<property name="action-name">app.start_continuous</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
@@ -247,6 +261,8 @@
 								<child>
 									<object class="GtkButton">
 										<property name="visible">True</property>
+										<property name="tooltip-text" translatable="yes">Stop the current execution</property>
+										<property name="action-name">app.stop</property>
 										<child>
 											<object class="GtkBox">
 												<property name="visible">True</property>
@@ -390,6 +406,7 @@
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Select Automatic Mode</property>
+								<property name="action-name">app.select_automatic_mode</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -421,6 +438,7 @@
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Reset to Preoperational</property>
+								<property name="action-name">app.reset</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -452,6 +470,7 @@
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Halt</property>
+								<property name="action-name">app.halt</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -480,6 +499,7 @@
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
 						<property name="text" translatable="yes">Unprepare Recipe</property>
+						<property name="action-name">app.unprepare_recipe</property>
 					</object>
 				</child>
 				<child>
@@ -506,6 +526,7 @@
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Start Single Job</property>
+								<property name="action-name">app.start_single_job</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -537,6 +558,7 @@
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Start Continuous</property>
+								<property name="action-name">app.start_continuous</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -567,7 +589,8 @@
 						<child>
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
-								<property name="text" translatable="yes">Stop Current Job</property>
+								<property name="text" translatable="yes">Stop Current Execution</property>
+								<property name="action-name">app.stop</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
@@ -598,7 +621,8 @@
 						<child>
 							<object class="GtkModelButton">
 								<property name="visible">True</property>
-								<property name="text" translatable="yes">Abort Current Job</property>
+								<property name="text" translatable="yes">Abort Current Execution</property>
+								<property name="action-name">app.abort</property>
 							</object>
 							<packing>
 								<property name="expand">True</property>
