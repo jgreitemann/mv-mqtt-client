@@ -5,7 +5,7 @@ use enum_map::{enum_map, EnumMap};
 use gio::prelude::*;
 use gtk::prelude::*;
 use itertools::izip;
-use mvjson::{available_actions, ActionType, State};
+use mvjson::*;
 
 use super::client::Client;
 
@@ -100,10 +100,30 @@ impl ApplicationController {
         };
         self.change_state(to_state);
 
+        let action = match atype {
+            ActionType::SelectModeAutomatic => Action::SelectMode {
+                mode: ModeType::Automatic,
+            },
+            ActionType::PrepareRecipe => Action::PrepareRecipe {
+                recipe_id: "0".to_string(),
+            },
+            ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
+            ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
+            ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
+            ActionType::Reset => Action::Reset,
+            ActionType::Halt => Action::Halt,
+            ActionType::Stop => Action::Stop,
+            ActionType::Abort => Action::Abort,
+        };
+
         self.weak_client
             .upgrade()
             .ok_or("Could not acquire MQTT client instance")
-            .map(|strong_client| strong_client.borrow().publish());
+            .map(|strong_client| {
+                strong_client
+                    .borrow()
+                    .publish("merlic/action/json", &action)
+            });
     }
 
     fn change_state(&self, to_state: State) {

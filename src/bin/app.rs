@@ -24,7 +24,7 @@ impl App {
         )
         .expect("Initialization failed...");
 
-        let client = Rc::new(RefCell::new(Client::new()));
+        let client = Rc::new(RefCell::new(Client::new("tcp://localhost:1883")));
 
         let app_ctrl = Rc::new(RefCell::new(ApplicationController::new(
             &application,

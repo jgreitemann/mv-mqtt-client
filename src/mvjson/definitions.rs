@@ -1,6 +1,5 @@
-extern crate enum_map;
-
 use enum_map::Enum;
+use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Debug, Enum)]
 pub enum State {
@@ -21,6 +20,40 @@ pub enum ActionType {
     UnprepareRecipe,
     StartSingleJob,
     StartContinuous,
+    Reset,
+    Halt,
+    Stop,
+    Abort,
+}
+
+#[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
+pub enum ModeType {
+    Automatic,
+    FrontendAccess,
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(tag = "actionType")]
+pub enum Action {
+    SelectMode {
+        mode: ModeType,
+    },
+    PrepareRecipe {
+        #[serde(rename = "recipeId")]
+        recipe_id: String,
+    },
+    UnprepareRecipe {
+        #[serde(rename = "recipeId", skip_serializing_if = "Option::is_none")]
+        recipe_id: Option<String>,
+    },
+    StartSingleJob {
+        #[serde(rename = "recipeId", skip_serializing_if = "Option::is_none")]
+        recipe_id: Option<String>,
+    },
+    StartContinuous {
+        #[serde(rename = "recipeId", skip_serializing_if = "Option::is_none")]
+        recipe_id: Option<String>,
+    },
     Reset,
     Halt,
     Stop,
