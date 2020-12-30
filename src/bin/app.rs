@@ -27,6 +27,23 @@ macro_rules! clone {
     );
 }
 
+macro_rules! weak {
+    (@param _) => ( _ );
+    (@param $x:ident) => ( $x );
+    ($($n:ident),+ => move || $body:expr) => (
+        {
+            $( let $n = Rc::downgrade($n); )+
+            move || $body
+        }
+    );
+    ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
+        {
+            $( let $n = Rc::downgrade($n); )+
+            move |$(weak!(@param $p),)+| $body
+        }
+    );
+}
+
 pub struct App {
     application: gtk::Application,
     client: Rc<RefCell<Client>>,
@@ -106,7 +123,8 @@ impl ApplicationController {
     }
 
     fn connect_callbacks(app: &gtk::Application, ctrl: &Rc<RefCell<ApplicationController>>) {
-        app.connect_activate(clone!(ctrl => move |app| {
+        app.connect_activate(weak!(ctrl => move |app| {
+            let ctrl = ctrl.upgrade().unwrap();
             let icon_theme = gtk::IconTheme::get_default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
             ctrl.borrow_mut().build_ui(app);
@@ -114,7 +132,9 @@ impl ApplicationController {
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
-            g_action.connect_activate(clone!(ctrl => move |_, _| ctrl.borrow().react(atype)));
+            g_action.connect_activate(
+                weak!(ctrl => move |_, _| ctrl.upgrade().unwrap().borrow().react(atype)),
+            );
         }
     }
 
