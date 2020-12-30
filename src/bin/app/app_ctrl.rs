@@ -3,6 +3,7 @@ use std::rc::{Rc, Weak};
 
 use enum_map::{enum_map, EnumMap};
 use gio::prelude::*;
+use glib::VariantType;
 use gtk::prelude::*;
 use itertools::izip;
 use mvjson::*;
@@ -37,7 +38,8 @@ impl ApplicationController {
     pub fn new<T: gio::ActionMapExt>(map: &T, weak_client: Weak<RefCell<Client>>) -> Self {
         let g_actions = enum_map! {
             ActionType::SelectModeAutomatic => gio::SimpleAction::new("select_automatic_mode", None),
-            ActionType::PrepareRecipe => gio::SimpleAction::new("prepare_recipe", None),
+            ActionType::PrepareRecipe => gio::SimpleAction::new("prepare_recipe",
+                                                                Some(&VariantType::new("s").unwrap())),
             ActionType::UnprepareRecipe => gio::SimpleAction::new("unprepare_recipe", None),
             ActionType::StartSingleJob => gio::SimpleAction::new("start_single_job", None),
             ActionType::StartContinuous => gio::SimpleAction::new("start_continuous", None),
@@ -69,9 +71,24 @@ impl ApplicationController {
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
-            g_action.connect_activate(
-                weak!(ctrl => move |_, _| ctrl.upgrade().unwrap().borrow().react(atype)),
-            );
+            g_action.connect_activate(weak!(ctrl => move |_, parameter| {
+                let action = match atype {
+                    ActionType::SelectModeAutomatic => Action::SelectMode {
+                        mode: ModeType::Automatic
+                    },
+                    ActionType::PrepareRecipe => Action::PrepareRecipe {
+                        recipe_id: parameter.unwrap().get_str().unwrap().to_string()
+                    },
+                    ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
+                    ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
+                    ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
+                    ActionType::Reset => Action::Reset,
+                    ActionType::Halt => Action::Halt,
+                    ActionType::Stop => Action::Stop,
+                    ActionType::Abort => Action::Abort,
+                };
+                ctrl.upgrade().unwrap().borrow().react(action)
+            }));
         }
     }
 
@@ -86,35 +103,19 @@ impl ApplicationController {
         }
     }
 
-    fn react(&self, atype: ActionType) {
-        let to_state = match atype {
-            ActionType::SelectModeAutomatic => State::Initialized,
-            ActionType::PrepareRecipe => State::Ready,
-            ActionType::UnprepareRecipe => State::Initialized,
-            ActionType::StartSingleJob => State::SingleExecution,
-            ActionType::StartContinuous => State::ContinuousExecution,
-            ActionType::Reset => State::Preoperational,
-            ActionType::Halt => State::Halted,
-            ActionType::Stop => State::Ready,
-            ActionType::Abort => State::Ready,
+    fn react(&self, action: Action) {
+        let to_state = match &action {
+            Action::SelectMode { mode: _ } => State::Initialized,
+            Action::PrepareRecipe { recipe_id: _ } => State::Ready,
+            Action::UnprepareRecipe { recipe_id: _ } => State::Initialized,
+            Action::StartSingleJob { recipe_id: _ } => State::SingleExecution,
+            Action::StartContinuous { recipe_id: _ } => State::ContinuousExecution,
+            Action::Reset => State::Preoperational,
+            Action::Halt => State::Halted,
+            Action::Stop => State::Ready,
+            Action::Abort => State::Ready,
         };
         self.change_state(to_state);
-
-        let action = match atype {
-            ActionType::SelectModeAutomatic => Action::SelectMode {
-                mode: ModeType::Automatic,
-            },
-            ActionType::PrepareRecipe => Action::PrepareRecipe {
-                recipe_id: "0".to_string(),
-            },
-            ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
-            ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
-            ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
-            ActionType::Reset => Action::Reset,
-            ActionType::Halt => Action::Halt,
-            ActionType::Stop => Action::Stop,
-            ActionType::Abort => Action::Abort,
-        };
 
         self.weak_client
             .upgrade()

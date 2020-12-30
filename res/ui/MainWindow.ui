@@ -715,6 +715,7 @@
 						<property name="text" translatable="yes">0: Check pen parts</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'0'</property>
 					</object>
 				</child>
 				<child>
@@ -723,6 +724,7 @@
 						<property name="text" translatable="yes">1: Car fuses</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'1'</property>
 					</object>
 				</child>
 				<child>
@@ -731,6 +733,7 @@
 						<property name="text" translatable="yes">2: daheng.mvapp</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'2'</property>
 					</object>
 				</child>
 			</object>
@@ -760,6 +763,7 @@
 						<property name="text" translatable="yes">0: Check pen parts</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'0'</property>
 					</object>
 				</child>
 				<child>
@@ -768,6 +772,7 @@
 						<property name="text" translatable="yes">1: Car fuses</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'1'</property>
 					</object>
 				</child>
 				<child>
@@ -776,6 +781,7 @@
 						<property name="text" translatable="yes">2: daheng.mvapp</property>
 						<property name="use-markup">True</property>
 						<property name="action-name">app.prepare_recipe</property>
+						<property name="action-target">'2'</property>
 					</object>
 				</child>
 			</object>

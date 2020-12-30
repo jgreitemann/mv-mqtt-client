@@ -487,6 +487,7 @@ dependencies = [
  "enum-map",
  "futures",
  "gio",
+ "glib",
  "gtk",
  "itertools 0.10.0",
  "paho-mqtt",
