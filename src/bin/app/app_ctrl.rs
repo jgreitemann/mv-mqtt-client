@@ -10,23 +10,6 @@ use mvjson::*;
 
 use super::client::Client;
 
-macro_rules! weak {
-    (@param _) => ( _ );
-    (@param $x:ident) => ( $x );
-    ($($n:ident),+ => move || $body:expr) => (
-        {
-            $( let $n = Rc::downgrade($n); )+
-            move || $body
-        }
-    );
-    ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
-        {
-            $( let $n = Rc::downgrade($n); )+
-            move |$(weak!(@param $p),)+| $body
-        }
-    );
-}
-
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     actions_stack: Option<gtk::Stack>,
@@ -107,19 +90,6 @@ impl ApplicationController {
     }
 
     fn react(&self, action: Action) {
-        let to_state = match &action {
-            Action::SelectMode { mode: _ } => State::Initialized,
-            Action::PrepareRecipe { recipe_id: _ } => State::Ready,
-            Action::UnprepareRecipe { recipe_id: _ } => State::Initialized,
-            Action::StartSingleJob { recipe_id: _ } => State::SingleExecution,
-            Action::StartContinuous { recipe_id: _ } => State::ContinuousExecution,
-            Action::Reset => State::Preoperational,
-            Action::Halt => State::Halted,
-            Action::Stop => State::Ready,
-            Action::Abort => State::Ready,
-        };
-        self.change_state(to_state);
-
         self.weak_client
             .upgrade()
             .ok_or("Could not acquire MQTT client instance")
@@ -127,10 +97,11 @@ impl ApplicationController {
                 strong_client
                     .borrow()
                     .publish("merlic/action/json", &action)
-            });
+            })
+            .unwrap();
     }
 
-    fn change_state(&self, to_state: State) {
+    pub fn change_state(&self, to_state: State) {
         for (allowed, g_action, icon_opt) in izip!(
             available_actions(to_state).values(),
             self.g_actions.values(),

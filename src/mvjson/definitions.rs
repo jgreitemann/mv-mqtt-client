@@ -1,7 +1,7 @@
 use enum_map::Enum;
 use serde::{Deserialize, Serialize};
 
-#[derive(Copy, Clone, Debug, Enum)]
+#[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
 pub enum State {
     Preoperational,
     Halted,
@@ -32,7 +32,7 @@ pub enum ModeType {
     FrontendAccess,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize)]
 #[serde(tag = "actionType")]
 pub enum Action {
     SelectMode {
@@ -60,8 +60,14 @@ pub enum Action {
     Abort,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Monitor {
-    state: State,
-    recipe_id: Option<String>,
-    job_id: Option<u32>,
+    pub state: State,
+    #[serde(default)]
+    pub mode: Option<ModeType>,
+    #[serde(default)]
+    pub recipe_id: Option<String>,
+    #[serde(default)]
+    pub job_id: Option<u32>,
 }

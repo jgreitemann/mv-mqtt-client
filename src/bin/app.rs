@@ -1,15 +1,19 @@
+#[macro_use]
+mod macros;
 mod app_ctrl;
 mod client;
 
 use std::cell::RefCell;
-use std::rc::{Rc, Weak};
+use std::rc::Rc;
 
 use gio::prelude::*;
-use gtk::prelude::*;
 
+use crate::app::client::Subscription;
 use app_ctrl::ApplicationController;
 use client::Client;
+use mvjson::Monitor;
 
+#[allow(dead_code)]
 pub struct App {
     application: gtk::Application,
     client: Rc<RefCell<Client>>,
@@ -31,6 +35,13 @@ impl App {
             Rc::downgrade(&client),
         )));
         ApplicationController::connect_callbacks(&application, &app_ctrl);
+
+        client
+            .borrow_mut()
+            .update_subscriptions(vec![Subscription::<Monitor, _>::boxed_new(
+                "merlic/monitor/json",
+                weak!(&app_ctrl => move |m| app_ctrl.upgrade().unwrap().borrow().change_state(m.state)),
+            )]);
 
         App {
             application,
