@@ -373,18 +373,10 @@
 			<object class="GtkStack" id="content-stack">
 				<property name="visible">True</property>
 				<child>
-					<object class="GtkBox">
+					<object class="GtkImage" id="statemachine-image">
 						<property name="visible">True</property>
-						<child>
-							<object class="GtkStackSwitcher">
-								<property name="visible">True</property>
-								<property name="expand">True</property>
-								<property name="halign">center</property>
-								<property name="valign">center</property>
-								<property name="can-focus">False</property>
-								<property name="stack">actions-stack</property>
-							</object>
-						</child>
+						<property name="can-focus">False</property>
+						<property name="file">res/img/state_machine/preoperational.png</property>
 					</object>
 					<packing>
 						<property name="name">statemachine</property>

@@ -30,6 +30,7 @@ macro_rules! weak {
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     actions_stack: Option<gtk::Stack>,
+    state_machine_image: Option<gtk::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk::Image>>,
     weak_client: Weak<RefCell<Client>>,
 }
@@ -56,6 +57,7 @@ impl ApplicationController {
         ApplicationController {
             g_actions,
             actions_stack: None,
+            state_machine_image: None,
             menu_icons: enum_map! {_ => None},
             weak_client,
         }
@@ -98,6 +100,7 @@ impl ApplicationController {
         window.set_application(Some(app));
 
         self.actions_stack = builder.get_object("actions-stack");
+        self.state_machine_image = builder.get_object("statemachine-image");
         for (atype, icon_opt) in &mut self.menu_icons {
             *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
@@ -141,6 +144,10 @@ impl ApplicationController {
 
         if let Some(stack) = &self.actions_stack {
             stack.set_visible_child_name(&*format!("{:?}-pane", to_state).to_lowercase());
+        }
+
+        if let Some(image) = &self.state_machine_image {
+            image.set_from_file(&*format!("res/img/state_machine/{:?}.png", to_state));
         }
     }
 }
