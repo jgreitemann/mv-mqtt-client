@@ -118,7 +118,7 @@ impl ApplicationController {
         }
 
         if let Some(image) = &self.state_machine_image {
-            image.set_from_file(&*format!("res/img/state_machine/{:?}.png", to_state));
+            image.set_from_file(&*format!("res/img/state_machine/{:?}.svg", to_state));
         }
     }
 }
