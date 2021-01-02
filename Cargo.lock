@@ -486,6 +486,7 @@ version = "0.0.1"
 dependencies = [
  "enum-map",
  "futures",
+ "gdk-pixbuf",
  "gio",
  "glib",
  "gtk",

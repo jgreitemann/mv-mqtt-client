@@ -1,8 +1,10 @@
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
-use enum_map::{enum_map, EnumMap};
 use gio::prelude::*;
+
+use enum_map::{enum_map, EnumMap};
+use gdk_pixbuf::Pixbuf;
 use glib::VariantType;
 use gtk::prelude::*;
 use itertools::izip;
@@ -12,6 +14,7 @@ use super::client::Client;
 
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
+    state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     actions_stack: Option<gtk::Stack>,
     state_machine_image: Option<gtk::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk::Image>>,
@@ -30,15 +33,21 @@ impl ApplicationController {
             ActionType::Reset => gio::SimpleAction::new("reset", None),
             ActionType::Halt => gio::SimpleAction::new("halt", None),
             ActionType::Stop => gio::SimpleAction::new("stop", None),
-            ActionType::Abort => gio::SimpleAction::new("abort", None)
+            ActionType::Abort => gio::SimpleAction::new("abort", None),
         };
 
         for (_, g_action) in &g_actions {
             map.add_action(g_action);
         }
 
+        let mut state_machine_pixbufs = enum_map! { _ => None };
+        for (state, pixbuf_opt) in &mut state_machine_pixbufs {
+            *pixbuf_opt = Pixbuf::from_file(format!("res/img/state_machine/{:?}.svg", state)).ok();
+        }
+
         ApplicationController {
             g_actions,
+            state_machine_pixbufs,
             actions_stack: None,
             state_machine_image: None,
             menu_icons: enum_map! {_ => None},
@@ -118,7 +127,7 @@ impl ApplicationController {
         }
 
         if let Some(image) = &self.state_machine_image {
-            image.set_from_file(&*format!("res/img/state_machine/{:?}.svg", to_state));
+            image.set_from_pixbuf(self.state_machine_pixbufs[to_state].as_ref());
         }
     }
 }
