@@ -4,20 +4,22 @@ mod app_ctrl;
 mod client;
 
 use std::cell::RefCell;
-use std::rc::Rc;
+use std::ops::{Deref, DerefMut};
+use std::sync::{Arc, Mutex};
 
 use gio::prelude::*;
 
 use crate::app::client::Subscription;
 use app_ctrl::ApplicationController;
 use client::Client;
-use mvjson::Monitor;
+use mvjson::*;
 
 #[allow(dead_code)]
 pub struct App {
     application: gtk::Application,
-    client: Rc<RefCell<Client>>,
-    app_ctrl: Rc<RefCell<ApplicationController>>,
+    current: Arc<Mutex<Monitor>>,
+    client: Arc<RefCell<Client>>,
+    app_ctrl: Arc<RefCell<ApplicationController>>,
 }
 
 impl App {
@@ -28,23 +30,39 @@ impl App {
         )
         .expect("Initialization failed...");
 
-        let client = Rc::new(RefCell::new(Client::new("tcp://localhost:1883")));
+        let current = Arc::new(Mutex::new(Monitor {
+            state: State::Preoperational,
+            mode: None,
+            recipe_id: None,
+            job_id: None,
+        }));
+        let current_weak = std::sync::Arc::downgrade(&current);
 
-        let app_ctrl = Rc::new(RefCell::new(ApplicationController::new(
+        let client = Arc::new(RefCell::new(Client::new("tcp://localhost:1883")));
+
+        let app_ctrl = Arc::new(RefCell::new(ApplicationController::new(
             &application,
-            Rc::downgrade(&client),
+            Arc::downgrade(&client),
         )));
-        ApplicationController::connect_callbacks(&application, &app_ctrl);
+        ApplicationController::connect_callbacks(&application, &app_ctrl, &current);
 
         client
             .borrow_mut()
             .update_subscriptions(vec![Subscription::<Monitor, _>::boxed_new(
                 "merlic/monitor/json",
-                weak!(&app_ctrl => move |m| app_ctrl.upgrade().unwrap().borrow().change_state(m.state)),
+                weak!(&app_ctrl => move |m| {
+                    let strong = current_weak.upgrade().unwrap();
+                    let mut guard = strong.lock().unwrap();
+                    *guard.deref_mut() = m;
+
+                    unsafe { gdk_sys::gdk_threads_init(); }
+                    app_ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
+                }),
             )]);
 
         App {
             application,
+            current,
             client,
             app_ctrl,
         }

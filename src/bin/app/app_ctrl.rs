@@ -1,5 +1,6 @@
 use std::cell::RefCell;
-use std::rc::{Rc, Weak};
+use std::ops::Deref;
+use std::sync::{Arc, Mutex, Weak};
 
 use gio::prelude::*;
 
@@ -55,13 +56,20 @@ impl ApplicationController {
         }
     }
 
-    pub fn connect_callbacks(app: &gtk::Application, ctrl: &Rc<RefCell<ApplicationController>>) {
-        app.connect_activate(weak!(ctrl => move |app| {
+    pub fn connect_callbacks(
+        app: &gtk::Application,
+        ctrl: &Arc<RefCell<ApplicationController>>,
+        current: &Arc<Mutex<Monitor>>,
+    ) {
+        app.connect_activate(weak!(ctrl, current => move |app| {
             let ctrl = ctrl.upgrade().unwrap();
             let icon_theme = gtk::IconTheme::get_default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
             ctrl.borrow_mut().build_ui(app);
-            ctrl.borrow().change_state(State::Preoperational);
+
+            let strong = current.upgrade().unwrap();
+            let current_guard = strong.lock().unwrap();
+            ctrl.borrow_mut().update_ui(current_guard.deref());
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
@@ -96,6 +104,7 @@ impl ApplicationController {
         for (atype, icon_opt) in &mut self.menu_icons {
             *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
+        // self.update_ui();
     }
 
     fn react(&self, action: Action) {
@@ -110,9 +119,9 @@ impl ApplicationController {
             .unwrap();
     }
 
-    pub fn change_state(&self, to_state: State) {
+    pub fn update_ui(&mut self, current: &Monitor) {
         for (allowed, g_action, icon_opt) in izip!(
-            available_actions(to_state).values(),
+            available_actions(current.state).values(),
             self.g_actions.values(),
             self.menu_icons.values()
         ) {
@@ -123,11 +132,11 @@ impl ApplicationController {
         }
 
         if let Some(stack) = &self.actions_stack {
-            stack.set_visible_child_name(&*format!("{:?}-pane", to_state).to_lowercase());
+            stack.set_visible_child_name(&*format!("{:?}-pane", current.state).to_lowercase());
         }
 
         if let Some(image) = &self.state_machine_image {
-            image.set_from_pixbuf(self.state_machine_pixbufs[to_state].as_ref());
+            image.set_from_pixbuf(self.state_machine_pixbufs[current.state].as_ref());
         }
     }
 }

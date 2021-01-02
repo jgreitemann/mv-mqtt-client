@@ -4,19 +4,19 @@ macro_rules! weak {
     (@param $x:ident) => ( $x );
     ($($n:ident),+ => move || $body:expr) => (
         {
-            $( let $n = std::rc::Rc::downgrade($n); )+
+            $( let $n = std::sync::Arc::downgrade($n); )+
             move || $body
         }
     );
     ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
         {
-            $( let $n = std::rc::Rc::downgrade($n); )+
+            $( let $n = std::sync::Arc::downgrade($n); )+
             move |$(weak!(@param $p),)+| $body
         }
     );
     (&$($n:ident),+ => move |$($p:tt),+| $body:expr) => (
         {
-            $( let $n = std::rc::Rc::downgrade(&$n); )+
+            $( let $n = std::sync::Arc::downgrade(&$n); )+
             move |$(weak!(@param $p),)+| $body
         }
     );
