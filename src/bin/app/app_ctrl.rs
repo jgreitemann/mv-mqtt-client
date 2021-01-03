@@ -69,7 +69,7 @@ impl ApplicationController {
     pub fn connect_callbacks(
         app: &gtk::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
-        current: &Arc<Mutex<Monitor>>,
+        current: &Arc<Mutex<Current>>,
     ) {
         app.connect_activate(weak!(ctrl, current => move |app| {
             let ctrl = ctrl.upgrade().unwrap();
@@ -147,7 +147,7 @@ impl ApplicationController {
             .unwrap();
     }
 
-    pub fn update_ui(&mut self, current: &Monitor) {
+    pub fn update_ui(&mut self, current: &Current) {
         for (allowed, g_action, icon_opt) in izip!(
             available_actions(current.state).values(),
             self.g_actions.values(),

@@ -17,7 +17,7 @@ use mvjson::*;
 #[allow(dead_code)]
 pub struct App {
     application: gtk::Application,
-    current: Arc<Mutex<Monitor>>,
+    current: Arc<Mutex<Current>>,
     client: Arc<RefCell<Client>>,
     app_ctrl: Arc<RefCell<ApplicationController>>,
 }
@@ -30,7 +30,7 @@ impl App {
         )
         .expect("Initialization failed...");
 
-        let current = Arc::new(Mutex::new(Monitor {
+        let current = Arc::new(Mutex::new(Current {
             state: State::Preoperational,
             mode: None,
             recipe_id: None,
@@ -48,12 +48,12 @@ impl App {
 
         client
             .borrow_mut()
-            .update_subscriptions(vec![Subscription::<Monitor, _>::boxed_new(
+            .update_subscriptions(vec![Subscription::<Current, _>::boxed_new(
                 "merlic/monitor/json",
-                weak!(&app_ctrl => move |m| {
+                weak!(&app_ctrl => move |c| {
                     let strong = current_weak.upgrade().unwrap();
                     let mut guard = strong.lock().unwrap();
-                    *guard.deref_mut() = m;
+                    *guard.deref_mut() = c;
 
                     unsafe { gdk_sys::gdk_threads_init(); }
                     app_ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());

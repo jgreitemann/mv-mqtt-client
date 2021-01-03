@@ -62,7 +62,7 @@ pub enum Action {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Monitor {
+pub struct Current {
     pub state: State,
     #[serde(default)]
     pub mode: Option<ModeType>,
