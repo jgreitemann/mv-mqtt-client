@@ -527,7 +527,7 @@
 				<child>
 					<object class="GtkModelButton">
 						<property name="visible">True</property>
-						<property name="menu-name">recipes-menu</property>
+						<property name="menu-name">recipes-submenu</property>
 						<property name="text" translatable="yes">Prepare Recipe…</property>
 					</object>
 				</child>
@@ -674,7 +674,7 @@
 			</object>
 		</child>
 		<child>
-			<object class="GtkBox">
+			<object class="GtkBox" id="recipes-submenu">
 				<property name="visible">True</property>
 				<property name="orientation">vertical</property>
 				<property name="margin">10</property>
@@ -683,6 +683,7 @@
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<property name="inverted">True</property>
+						<property name="centered">True</property>
 						<property name="menu-name">main</property>
 						<property name="text" translatable="yes">Back</property>
 					</object>
@@ -692,91 +693,13 @@
 						<property name="visible">True</property>
 					</object>
 				</child>
-				<child>
-					<object class="GtkLabel">
-						<property name="visible">True</property>
-						<property name="margin-top">5</property>
-						<property name="margin-bottom">10</property>
-						<property name="label" translatable="yes">&lt;i&gt;Prepare Recipe:&lt;/i&gt;</property>
-						<property name="use-markup">True</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">0: Check pen parts</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'0'</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">1: Car fuses</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'1'</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">2: daheng.mvapp</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'2'</property>
-					</object>
-				</child>
 			</object>
 			<packing>
-				<property name="submenu">recipes-menu</property>
+				<property name="submenu">recipes-submenu</property>
 			</packing>
 		</child>
 	</object>
-	<object class="GtkPopoverMenu" id="recipes-popover">
+	<object class="GtkPopover" id="recipes-popover">
 		<property name="can-focus">False</property>
-		<child>
-			<object class="GtkBox">
-				<property name="visible">True</property>
-				<property name="orientation">vertical</property>
-				<property name="margin">10</property>
-				<child>
-					<object class="GtkLabel">
-						<property name="visible">True</property>
-						<property name="margin-bottom">10</property>
-						<property name="label" translatable="yes">&lt;i&gt;Prepare Recipe:&lt;/i&gt;</property>
-						<property name="use-markup">True</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">0: Check pen parts</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'0'</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">1: Car fuses</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'1'</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">2: daheng.mvapp</property>
-						<property name="use-markup">True</property>
-						<property name="action-name">app.prepare_recipe</property>
-						<property name="action-target">'2'</property>
-					</object>
-				</child>
-			</object>
-		</child>
 	</object>
 </interface>

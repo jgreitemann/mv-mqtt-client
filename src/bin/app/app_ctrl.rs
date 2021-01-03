@@ -2,12 +2,12 @@ use std::cell::RefCell;
 use std::ops::Deref;
 use std::sync::{Arc, Mutex, Weak};
 
-use gio::prelude::*;
-
-use enum_map::{enum_map, EnumMap};
 use gdk_pixbuf::Pixbuf;
+use gio::prelude::*;
 use glib::VariantType;
 use gtk::prelude::*;
+
+use enum_map::{enum_map, EnumMap};
 use itertools::izip;
 use mvjson::*;
 
@@ -15,6 +15,8 @@ use super::client::Client;
 
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
+    recipes_menu: gio::Menu,
+    recipes_menu_section: gio::Menu,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     actions_stack: Option<gtk::Stack>,
     state_machine_image: Option<gtk::Image>,
@@ -41,6 +43,12 @@ impl ApplicationController {
             map.add_action(g_action);
         }
 
+        let recipes_menu_section = gio::Menu::new();
+        recipes_menu_section.append(Some("Hello menu!"), Some("app.prepare_recipe('0')"));
+
+        let recipes_menu = gio::Menu::new();
+        recipes_menu.append_section(Some("Prepare Recipe"), &recipes_menu_section);
+
         let mut state_machine_pixbufs = enum_map! { _ => None };
         for (state, pixbuf_opt) in &mut state_machine_pixbufs {
             *pixbuf_opt = Pixbuf::from_file(format!("res/img/state_machine/{:?}.svg", state)).ok();
@@ -48,6 +56,8 @@ impl ApplicationController {
 
         ApplicationController {
             g_actions,
+            recipes_menu,
+            recipes_menu_section,
             state_machine_pixbufs,
             actions_stack: None,
             state_machine_image: None,
@@ -104,6 +114,25 @@ impl ApplicationController {
         for (atype, icon_opt) in &mut self.menu_icons {
             *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
+
+        let recipes_popover: gtk::Popover = builder.get_object("recipes-popover").unwrap();
+        recipes_popover.bind_model(Some(&self.recipes_menu), None);
+
+        let recipes_submenu: gtk::Box = builder.get_object("recipes-submenu").unwrap();
+        let recipes_submenu_offscreen_popover = gtk::PopoverMenu::new();
+        recipes_submenu_offscreen_popover.bind_model(Some(&self.recipes_menu), None);
+        let offscreen_stack: gtk::Stack = recipes_submenu_offscreen_popover
+            .get_child()
+            .unwrap()
+            .downcast()
+            .unwrap();
+        let recipes_submenu_box: gtk::Box = offscreen_stack.get_children()[0]
+            .clone()
+            .downcast()
+            .unwrap();
+        recipes_submenu_box.set_property_margin(0);
+        offscreen_stack.remove(&recipes_submenu_box);
+        recipes_submenu.add(&recipes_submenu_box);
     }
 
     fn react(&self, action: Action) {
