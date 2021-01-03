@@ -104,7 +104,6 @@ impl ApplicationController {
         for (atype, icon_opt) in &mut self.menu_icons {
             *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
-        // self.update_ui();
     }
 
     fn react(&self, action: Action) {

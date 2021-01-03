@@ -57,6 +57,7 @@ impl App {
 
                     unsafe { gdk_sys::gdk_threads_init(); }
                     app_ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
+                    unsafe { gdk_sys::gdk_threads_leave(); }
                 }),
             )]);
 
