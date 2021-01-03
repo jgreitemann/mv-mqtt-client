@@ -46,9 +46,8 @@ impl App {
         )));
         ApplicationController::connect_callbacks(&application, &app_ctrl, &current);
 
-        client
-            .borrow_mut()
-            .update_subscriptions(vec![Subscription::<Current, _>::boxed_new(
+        client.borrow_mut().update_subscriptions(vec![
+            Subscription::<Current, _>::boxed_new(
                 "merlic/monitor/json",
                 weak!(&app_ctrl => move |c| {
                     let strong = current_weak.upgrade().unwrap();
@@ -59,7 +58,16 @@ impl App {
                     app_ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
                     unsafe { gdk_sys::gdk_threads_leave(); }
                 }),
-            )]);
+            ),
+            Subscription::<Vec<Recipe>, _>::boxed_new(
+                "merlic/recipes/json",
+                weak!(&app_ctrl => move |recipe_list| {
+                    unsafe { gdk_sys::gdk_threads_init(); }
+                    app_ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(&recipe_list);
+                    unsafe { gdk_sys::gdk_threads_leave(); }
+                }),
+            ),
+        ]);
 
         App {
             application,

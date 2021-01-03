@@ -32,6 +32,31 @@ pub enum ModeType {
     FrontendAccess,
 }
 
+#[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
+pub enum ValueType {
+    #[serde(rename = "Scalar")]
+    ScalarValue,
+    #[serde(rename = "Array")]
+    ArrayValue,
+}
+
+#[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
+pub enum DataType {
+    Bool,
+    Int8,
+    UInt8,
+    Int16,
+    UInt16,
+    Int32,
+    UInt32,
+    Int64,
+    UInt64,
+    Float,
+    Double,
+    String,
+    Variant,
+}
+
 #[derive(Serialize)]
 #[serde(tag = "actionType")]
 pub enum Action {
@@ -70,4 +95,21 @@ pub struct Current {
     pub recipe_id: Option<String>,
     #[serde(default)]
     pub job_id: Option<u32>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecipeParam {
+    pub name: String,
+    pub description: String,
+    pub value_type: ValueType,
+    pub data_type: DataType,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Recipe {
+    pub id: String,
+    pub description: String,
+    pub inputs: Vec<RecipeParam>,
+    pub outputs: Vec<RecipeParam>,
 }

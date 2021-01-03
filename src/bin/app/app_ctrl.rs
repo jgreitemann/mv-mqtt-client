@@ -8,7 +8,7 @@ use glib::VariantType;
 use gtk::prelude::*;
 
 use enum_map::{enum_map, EnumMap};
-use itertools::izip;
+use itertools::{izip, Itertools};
 use mvjson::*;
 
 use super::client::Client;
@@ -44,8 +44,6 @@ impl ApplicationController {
         }
 
         let recipes_menu_section = gio::Menu::new();
-        recipes_menu_section.append(Some("Hello menu!"), Some("app.prepare_recipe('0')"));
-
         let recipes_menu = gio::Menu::new();
         recipes_menu.append_section(Some("Prepare Recipe"), &recipes_menu_section);
 
@@ -165,6 +163,34 @@ impl ApplicationController {
 
         if let Some(image) = &self.state_machine_image {
             image.set_from_pixbuf(self.state_machine_pixbufs[current.state].as_ref());
+        }
+    }
+
+    pub fn update_recipe_list(&self, recipe_list: &Vec<Recipe>) {
+        self.recipes_menu_section.remove_all();
+
+        for recipe in recipe_list {
+            let desc = if recipe.description.len() > 30 {
+                let mut shortened = recipe
+                    .description
+                    .split_whitespace()
+                    .scan(0, |l, w| {
+                        *l += w.len();
+                        Some((*l, w))
+                    })
+                    .take_while(|(l, _)| *l < 25)
+                    .map(|(_, w)| w)
+                    .join(" ");
+                shortened.push_str("...");
+                shortened
+            } else {
+                recipe.description.to_string()
+            };
+
+            self.recipes_menu_section.append(
+                Some(&*format!("{}: {}", recipe.id, desc)),
+                Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
+            );
         }
     }
 }
