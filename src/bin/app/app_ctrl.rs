@@ -1,6 +1,5 @@
 use std::cell::{Cell, RefCell};
-use std::ops::{Deref, DerefMut};
-use std::sync::{Arc, Mutex, Weak};
+use std::sync::{Arc, Weak};
 
 use gdk_pixbuf::Pixbuf;
 use gio::prelude::*;
@@ -67,31 +66,22 @@ impl ApplicationController {
     pub fn connect_callbacks(
         app: &gtk::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
-        current: &Arc<Mutex<Current>>,
         current_rx: glib::Receiver<Current>,
         rlist_rx: glib::Receiver<Vec<Recipe>>,
     ) {
         let current_rx_cell = Cell::new(Some(current_rx));
         let rlist_rx_cell = Cell::new(Some(rlist_rx));
 
-        app.connect_activate(weak!(ctrl, current => move |app| {
+        app.connect_activate(weak!(ctrl => move |app| {
             let ctrl_strong = ctrl.upgrade().unwrap();
             let icon_theme = gtk::IconTheme::get_default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
             ctrl_strong.borrow_mut().build_ui(app);
 
-            let current_strong = current.upgrade().unwrap();
-            let current_guard = current_strong.lock().unwrap();
-            ctrl_strong.borrow_mut().update_ui(current_guard.deref());
-
             current_rx_cell.take().unwrap().attach(
                 None,
-                clone!(ctrl, current => move |c| {
-                    let strong = current.upgrade().unwrap();
-                    let mut guard = strong.lock().unwrap();
-                    *guard.deref_mut() = c;
-
-                    ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
+                clone!(ctrl => move |current| {
+                    ctrl.upgrade().unwrap().borrow_mut().update_current(&current);
                     glib::Continue(true)
                 }),
             );
@@ -170,7 +160,7 @@ impl ApplicationController {
             .unwrap();
     }
 
-    pub fn update_ui(&mut self, current: &Current) {
+    pub fn update_current(&mut self, current: &Current) {
         for (allowed, g_action, icon_opt) in izip!(
             available_actions(current.state).values(),
             self.g_actions.values(),

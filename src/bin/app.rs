@@ -4,7 +4,7 @@ mod app_ctrl;
 mod client;
 
 use std::cell::RefCell;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 use gio::prelude::*;
 
@@ -16,7 +16,6 @@ use mvjson::*;
 #[allow(dead_code)]
 pub struct App {
     application: gtk::Application,
-    current: Arc<Mutex<Current>>,
     client: Arc<RefCell<Client>>,
     app_ctrl: Arc<RefCell<ApplicationController>>,
 }
@@ -29,12 +28,6 @@ impl App {
         )
         .expect("Initialization failed...");
 
-        let current = Arc::new(Mutex::new(Current {
-            state: State::Preoperational,
-            mode: None,
-            recipe_id: None,
-            job_id: None,
-        }));
         let client = Arc::new(RefCell::new(Client::new("tcp://localhost:1883")));
 
         let app_ctrl = Arc::new(RefCell::new(ApplicationController::new(
@@ -44,13 +37,7 @@ impl App {
 
         let (current_tx, current_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
         let (rlist_tx, rlist_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
-        ApplicationController::connect_callbacks(
-            &application,
-            &app_ctrl,
-            &current,
-            current_rx,
-            rlist_rx,
-        );
+        ApplicationController::connect_callbacks(&application, &app_ctrl, current_rx, rlist_rx);
 
         client.borrow_mut().update_subscriptions(vec![
             Subscription::<Current, _>::boxed_new("merlic/monitor/json", move |c| {
@@ -63,7 +50,6 @@ impl App {
 
         App {
             application,
-            current,
             client,
             app_ctrl,
         }
