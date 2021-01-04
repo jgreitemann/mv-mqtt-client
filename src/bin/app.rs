@@ -4,7 +4,6 @@ mod app_ctrl;
 mod client;
 
 use std::cell::RefCell;
-use std::ops::{Deref, DerefMut};
 use std::sync::{Arc, Mutex};
 
 use gio::prelude::*;
@@ -36,37 +35,30 @@ impl App {
             recipe_id: None,
             job_id: None,
         }));
-        let current_weak = std::sync::Arc::downgrade(&current);
-
         let client = Arc::new(RefCell::new(Client::new("tcp://localhost:1883")));
 
         let app_ctrl = Arc::new(RefCell::new(ApplicationController::new(
             &application,
             Arc::downgrade(&client),
         )));
-        ApplicationController::connect_callbacks(&application, &app_ctrl, &current);
+
+        let (current_tx, current_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        let (rlist_tx, rlist_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        ApplicationController::connect_callbacks(
+            &application,
+            &app_ctrl,
+            &current,
+            current_rx,
+            rlist_rx,
+        );
 
         client.borrow_mut().update_subscriptions(vec![
-            Subscription::<Current, _>::boxed_new(
-                "merlic/monitor/json",
-                weak!(&app_ctrl => move |c| {
-                    let strong = current_weak.upgrade().unwrap();
-                    let mut guard = strong.lock().unwrap();
-                    *guard.deref_mut() = c;
-
-                    unsafe { gdk_sys::gdk_threads_init(); }
-                    app_ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
-                    unsafe { gdk_sys::gdk_threads_leave(); }
-                }),
-            ),
-            Subscription::<Vec<Recipe>, _>::boxed_new(
-                "merlic/recipes/json",
-                weak!(&app_ctrl => move |recipe_list| {
-                    unsafe { gdk_sys::gdk_threads_init(); }
-                    app_ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(&recipe_list);
-                    unsafe { gdk_sys::gdk_threads_leave(); }
-                }),
-            ),
+            Subscription::<Current, _>::boxed_new("merlic/monitor/json", move |c| {
+                current_tx.send(c).unwrap()
+            }),
+            Subscription::<Vec<Recipe>, _>::boxed_new("merlic/recipes/json", move |rlist| {
+                rlist_tx.send(rlist).unwrap()
+            }),
         ]);
 
         App {

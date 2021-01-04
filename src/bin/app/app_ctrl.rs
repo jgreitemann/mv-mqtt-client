@@ -1,5 +1,5 @@
-use std::cell::RefCell;
-use std::ops::Deref;
+use std::cell::{Cell, RefCell};
+use std::ops::{Deref, DerefMut};
 use std::sync::{Arc, Mutex, Weak};
 
 use gdk_pixbuf::Pixbuf;
@@ -68,16 +68,41 @@ impl ApplicationController {
         app: &gtk::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
         current: &Arc<Mutex<Current>>,
+        current_rx: glib::Receiver<Current>,
+        rlist_rx: glib::Receiver<Vec<Recipe>>,
     ) {
+        let current_rx_cell = Cell::new(Some(current_rx));
+        let rlist_rx_cell = Cell::new(Some(rlist_rx));
+
         app.connect_activate(weak!(ctrl, current => move |app| {
-            let ctrl = ctrl.upgrade().unwrap();
+            let ctrl_strong = ctrl.upgrade().unwrap();
             let icon_theme = gtk::IconTheme::get_default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
-            ctrl.borrow_mut().build_ui(app);
+            ctrl_strong.borrow_mut().build_ui(app);
 
-            let strong = current.upgrade().unwrap();
-            let current_guard = strong.lock().unwrap();
-            ctrl.borrow_mut().update_ui(current_guard.deref());
+            let current_strong = current.upgrade().unwrap();
+            let current_guard = current_strong.lock().unwrap();
+            ctrl_strong.borrow_mut().update_ui(current_guard.deref());
+
+            current_rx_cell.take().unwrap().attach(
+                None,
+                clone!(ctrl, current => move |c| {
+                    let strong = current.upgrade().unwrap();
+                    let mut guard = strong.lock().unwrap();
+                    *guard.deref_mut() = c;
+
+                    ctrl.upgrade().unwrap().borrow_mut().update_ui(guard.deref());
+                    glib::Continue(true)
+                }),
+            );
+
+            rlist_rx_cell.take().unwrap().attach(
+                None,
+                clone!(ctrl => move |recipe_list| {
+                    ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(&recipe_list);
+                    glib::Continue(true)
+                }),
+            );
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {

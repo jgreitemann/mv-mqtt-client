@@ -487,7 +487,6 @@ dependencies = [
  "enum-map",
  "futures",
  "gdk-pixbuf",
- "gdk-sys",
  "gio",
  "glib",
  "gtk",
