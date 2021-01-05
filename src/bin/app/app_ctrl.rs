@@ -7,10 +7,11 @@ use glib::VariantType;
 use gtk::prelude::*;
 
 use enum_map::{enum_map, EnumMap};
-use itertools::{izip, Itertools};
+use itertools::izip;
 use mvjson::*;
 
 use super::client::Client;
+use super::helpers::*;
 
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
@@ -185,25 +186,12 @@ impl ApplicationController {
         self.recipes_menu_section.remove_all();
 
         for recipe in recipe_list {
-            let desc = if recipe.description.len() > 30 {
-                let mut shortened = recipe
-                    .description
-                    .split_whitespace()
-                    .scan(0, |l, w| {
-                        *l += w.len();
-                        Some((*l, w))
-                    })
-                    .take_while(|(l, _)| *l < 25)
-                    .map(|(_, w)| w)
-                    .join(" ");
-                shortened.push_str("...");
-                shortened
-            } else {
-                recipe.description.to_string()
-            };
-
             self.recipes_menu_section.append(
-                Some(&*format!("{}: {}", recipe.id, desc)),
+                Some(&*format!(
+                    "{}: {}",
+                    recipe.id,
+                    ellipt(&recipe.description, 25)
+                )),
                 Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
             );
         }

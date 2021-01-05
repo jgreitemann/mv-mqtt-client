@@ -688,11 +688,6 @@
 						<property name="text" translatable="yes">Back</property>
 					</object>
 				</child>
-				<child>
-					<object class="GtkSeparator">
-						<property name="visible">True</property>
-					</object>
-				</child>
 			</object>
 			<packing>
 				<property name="submenu">recipes-submenu</property>

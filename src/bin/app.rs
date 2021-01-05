@@ -2,6 +2,7 @@
 mod macros;
 mod app_ctrl;
 mod client;
+mod helpers;
 
 use std::cell::RefCell;
 use std::sync::Arc;
