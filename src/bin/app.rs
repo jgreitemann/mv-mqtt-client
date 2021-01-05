@@ -40,7 +40,7 @@ impl App {
         ApplicationController::connect_callbacks(&application, &app_ctrl, current_rx, rlist_rx);
 
         client.borrow_mut().update_subscriptions(vec![
-            Subscription::<Current, _>::boxed_new("merlic/monitor/json", move |c| {
+            Subscription::<Current, _>::boxed_new("merlic/current/json", move |c| {
                 current_tx.send(c).unwrap()
             }),
             Subscription::<Vec<Recipe>, _>::boxed_new("merlic/recipes/json", move |rlist| {
