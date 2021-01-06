@@ -1,4 +1,5 @@
 use enum_map::Enum;
+use glib::{Type, Value};
 use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
@@ -57,6 +58,14 @@ pub enum DataType {
     Variant,
 }
 
+#[derive(Copy, Clone, Debug, Enum, Deserialize, Serialize)]
+pub enum ResultState {
+    Completed,
+    Processing,
+    Aborted,
+    Failed,
+}
+
 #[derive(Serialize)]
 #[serde(tag = "actionType")]
 pub enum Action {
@@ -112,4 +121,50 @@ pub struct Recipe {
     pub description: String,
     pub inputs: Vec<RecipeParam>,
     pub outputs: Vec<RecipeParam>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum ResultValue {
+    Boolean(bool),
+    Integer(i64),
+    FloatingPoint(f64),
+    String(String),
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ResultItem {
+    pub name: String,
+    pub value: ResultValue,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct VisionResult {
+    pub id: u32,
+    pub recipe_id: String,
+    pub job_id: u32,
+    pub timestamp: String,
+    pub result_state: ResultState,
+    pub content: Vec<ResultItem>,
+}
+
+impl glib::ToValue for ResultValue {
+    fn to_value(&self) -> Value {
+        match self {
+            ResultValue::Boolean(b) => b.to_value(),
+            ResultValue::Integer(i) => i.to_value(),
+            ResultValue::FloatingPoint(f) => f.to_value(),
+            ResultValue::String(s) => s.to_value(),
+        }
+    }
+
+    fn to_value_type(&self) -> Type {
+        match self {
+            ResultValue::Boolean(_) => Type::Bool,
+            ResultValue::Integer(_) => Type::I64,
+            ResultValue::FloatingPoint(_) => Type::F64,
+            ResultValue::String(_) => Type::String,
+        }
+    }
 }

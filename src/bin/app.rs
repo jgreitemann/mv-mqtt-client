@@ -38,7 +38,14 @@ impl App {
 
         let (current_tx, current_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
         let (rlist_tx, rlist_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
-        ApplicationController::connect_callbacks(&application, &app_ctrl, current_rx, rlist_rx);
+        let (result_tx, result_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        ApplicationController::connect_callbacks(
+            &application,
+            &app_ctrl,
+            current_rx,
+            rlist_rx,
+            result_rx,
+        );
 
         client.borrow_mut().update_subscriptions(vec![
             Subscription::<Current, _>::boxed_new("merlic/current/json", move |c| {
@@ -47,6 +54,10 @@ impl App {
             Subscription::<Vec<Recipe>, _>::boxed_new("merlic/recipes/json", move |rlist| {
                 rlist_tx.send(rlist).unwrap()
             }),
+            Subscription::<VisionResult, _>::boxed_new(
+                "merlic/recipes/+/result/json",
+                move |result| result_tx.send(result).unwrap(),
+            ),
         ]);
 
         App {

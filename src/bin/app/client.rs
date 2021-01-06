@@ -1,6 +1,7 @@
 use paho_mqtt as mqtt;
 
-use itertools::Itertools;
+use crate::app::helpers::regex_from_mqtt_wildcard;
+use itertools::{zip, Itertools};
 use mqtt::{AsyncClient, DeliveryToken, Message};
 use paho_mqtt::QOS_1;
 use serde::{de::DeserializeOwned, Serialize};
@@ -76,12 +77,18 @@ impl Client {
             .map(|s| s.get_handled_topic())
             .map_into()
             .collect();
+        let regexes: Vec<_> = subs
+            .iter()
+            .map(|s| s.get_handled_topic())
+            .map(regex_from_mqtt_wildcard)
+            .collect();
         let all_qos = [QOS_1].repeat(all_topics.len());
 
         self.instance.unsubscribe("#").wait().unwrap();
         self.instance.set_message_callback(move |_, msg_opt| {
             if let Some(msg) = msg_opt {
-                if let Some(sub) = subs.iter().find(|s| s.get_handled_topic() == msg.topic()) {
+                if let Some((sub, _)) = zip(&subs, &regexes).find(|(_, r)| r.is_match(msg.topic()))
+                {
                     sub.handle_message(msg);
                 }
             }

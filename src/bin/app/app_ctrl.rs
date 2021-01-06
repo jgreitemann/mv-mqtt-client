@@ -4,7 +4,7 @@ use std::sync::{Arc, Weak};
 
 use gdk_pixbuf::Pixbuf;
 use gio::prelude::*;
-use glib::VariantType;
+use glib::{ToValue, VariantType};
 use gtk::prelude::*;
 
 use enum_map::{enum_map, EnumMap};
@@ -76,9 +76,11 @@ impl ApplicationController {
         ctrl: &Arc<RefCell<ApplicationController>>,
         current_rx: glib::Receiver<Current>,
         rlist_rx: glib::Receiver<Vec<Recipe>>,
+        result_rx: glib::Receiver<VisionResult>,
     ) {
         let current_rx_cell = Cell::new(Some(current_rx));
         let rlist_rx_cell = Cell::new(Some(rlist_rx));
+        let result_rx_cell = Cell::new(Some(result_rx));
 
         app.connect_activate(weak!(ctrl => move |app| {
             let ctrl_strong = ctrl.upgrade().unwrap();
@@ -98,6 +100,14 @@ impl ApplicationController {
                 None,
                 clone!(ctrl => move |recipe_list| {
                     ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(recipe_list);
+                    glib::Continue(true)
+                }),
+            );
+
+            result_rx_cell.take().unwrap().attach(
+                None,
+                clone!(ctrl => move |result| {
+                    ctrl.upgrade().unwrap().borrow_mut().new_result(result);
                     glib::Continue(true)
                 }),
             );
@@ -234,7 +244,7 @@ impl ApplicationController {
                 let col = gtk::TreeViewColumn::new();
                 let cell = gtk::CellRendererText::new();
                 cell.set_property_alignment(pango::Alignment::Right);
-                cell.set_property_xalign(1.0);
+                // cell.set_property_xalign(1.0);
                 col.set_title(title);
                 col.pack_start(&cell, true);
                 col.add_attribute(&cell, "text", i as i32);
@@ -247,6 +257,26 @@ impl ApplicationController {
             results_tree.set_model(Some(&result_store));
 
             self.result_stores.insert(recipe.id.clone(), result_store);
+        }
+    }
+
+    pub fn new_result(&mut self, result: VisionResult) {
+        if let Some(store) = self.result_stores.get(&result.recipe_id) {
+            let ids: Vec<&dyn ToValue> = vec![&result.id, &result.job_id];
+            let vals: Vec<_> = ids
+                .into_iter()
+                .chain(
+                    result
+                        .content
+                        .iter()
+                        .map(|item| -> &dyn ToValue { &item.value }),
+                )
+                .collect();
+            store.insert_with_values(
+                None,
+                (0u32..(vals.len() as u32)).collect::<Vec<u32>>().as_slice(),
+                vals.as_slice(),
+            );
         }
     }
 }

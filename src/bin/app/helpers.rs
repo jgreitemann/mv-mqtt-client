@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use regex::Regex;
 
 pub fn ellipt(phrase: &str, min_length: usize) -> String {
     let mut shortened = phrase
@@ -15,4 +16,35 @@ pub fn ellipt(phrase: &str, min_length: usize) -> String {
         shortened.push_str("...");
     }
     shortened
+}
+
+pub fn regex_from_mqtt_wildcard(wildcard: &str) -> Regex {
+    let expanded = wildcard
+        .split('/')
+        .map(|w| {
+            w.chars()
+                .map(|c| match c {
+                    x @ '['
+                    | x @ ']'
+                    | x @ '('
+                    | x @ ')'
+                    | x @ '.'
+                    | x @ '*'
+                    | x @ '?'
+                    | x @ '\\'
+                    | x @ '^'
+                    | x @ '$'
+                    | x @ '|' => format!("\\{}", x),
+                    x => format!("{}", x),
+                })
+                .join("")
+        })
+        .map(|subtopic| match subtopic.as_str() {
+            "#" => "[^+#]+".to_string(),
+            "+" => "[^+#/]+".to_string(),
+            _ => subtopic,
+        })
+        .join("/");
+    println!("^{}$", expanded);
+    Regex::new(&*format!("^{}$", expanded)).unwrap()
 }
