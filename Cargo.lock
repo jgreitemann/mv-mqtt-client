@@ -492,6 +492,7 @@ dependencies = [
  "gtk",
  "itertools 0.10.0",
  "paho-mqtt",
+ "pango",
  "serde",
  "serde_json",
 ]

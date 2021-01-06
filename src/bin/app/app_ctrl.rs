@@ -1,4 +1,5 @@
 use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
 use std::sync::{Arc, Weak};
 
 use gdk_pixbuf::Pixbuf;
@@ -14,13 +15,16 @@ use super::client::Client;
 use super::helpers::*;
 
 pub struct ApplicationController {
+    current: Option<Current>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     recipes_menu: gio::Menu,
     recipes_menu_section: gio::Menu,
+    result_stores: HashMap<String, gtk::ListStore>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     actions_stack: Option<gtk::Stack>,
     state_machine_image: Option<gtk::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk::Image>>,
+    results_stack: Option<gtk::Stack>,
     weak_client: Weak<RefCell<Client>>,
 }
 
@@ -53,13 +57,16 @@ impl ApplicationController {
         }
 
         ApplicationController {
+            current: None,
             g_actions,
             recipes_menu,
             recipes_menu_section,
+            result_stores: HashMap::new(),
             state_machine_pixbufs,
             actions_stack: None,
             state_machine_image: None,
             menu_icons: enum_map! {_ => None},
+            results_stack: None,
             weak_client,
         }
     }
@@ -82,7 +89,7 @@ impl ApplicationController {
             current_rx_cell.take().unwrap().attach(
                 None,
                 clone!(ctrl => move |current| {
-                    ctrl.upgrade().unwrap().borrow_mut().update_current(&current);
+                    ctrl.upgrade().unwrap().borrow_mut().update_current(current);
                     glib::Continue(true)
                 }),
             );
@@ -90,7 +97,7 @@ impl ApplicationController {
             rlist_rx_cell.take().unwrap().attach(
                 None,
                 clone!(ctrl => move |recipe_list| {
-                    ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(&recipe_list);
+                    ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(recipe_list);
                     glib::Continue(true)
                 }),
             );
@@ -147,6 +154,8 @@ impl ApplicationController {
         recipes_submenu_box.set_property_margin(0);
         offscreen_stack.remove(&recipes_submenu_box);
         recipes_submenu.add(&recipes_submenu_box);
+
+        self.results_stack = builder.get_object("results-stack");
     }
 
     fn react(&self, action: Action) {
@@ -161,7 +170,7 @@ impl ApplicationController {
             .unwrap();
     }
 
-    pub fn update_current(&mut self, current: &Current) {
+    pub fn update_current(&mut self, current: Current) {
         for (allowed, g_action, icon_opt) in izip!(
             available_actions(current.state).values(),
             self.g_actions.values(),
@@ -180,20 +189,64 @@ impl ApplicationController {
         if let Some(image) = &self.state_machine_image {
             image.set_from_pixbuf(self.state_machine_pixbufs[current.state].as_ref());
         }
+
+        self.current = Some(current);
     }
 
-    pub fn update_recipe_list(&self, recipe_list: &Vec<Recipe>) {
+    pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
         self.recipes_menu_section.remove_all();
 
+        let results_stack = self.results_stack.as_ref().unwrap();
+        for child in &results_stack.get_children() {
+            results_stack.remove(child);
+        }
+
+        self.result_stores.clear();
+
         for recipe in recipe_list {
+            let short_desc = ellipt(&recipe.description, 25);
             self.recipes_menu_section.append(
-                Some(&*format!(
-                    "{}: {}",
-                    recipe.id,
-                    ellipt(&recipe.description, 25)
-                )),
+                Some(&*format!("{}: {}", recipe.id, &short_desc)),
                 Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
             );
+
+            let result_builder = gtk::Builder::from_file("res/ui/ResultsPane.ui");
+            let result_pane: gtk::Box = result_builder.get_object("outer-box").unwrap();
+            results_stack.add(&result_pane);
+            results_stack.set_child_name(&result_pane, Some(&recipe.id));
+            results_stack.set_child_title(
+                &result_pane,
+                Some(&*format!("{}: {}", recipe.id, &short_desc)),
+            );
+
+            let col_entries = [("Result ID", glib::Type::U32), ("Job ID", glib::Type::U32)]
+                .iter()
+                .copied()
+                .chain(
+                    recipe
+                        .outputs
+                        .iter()
+                        .map(|p| (p.name.as_str(), p.data_type.as_glib_type())),
+                );
+
+            let results_tree: gtk::TreeView = result_builder.get_object("results-tree").unwrap();
+            for (i, (title, _)) in col_entries.clone().enumerate() {
+                let col = gtk::TreeViewColumn::new();
+                let cell = gtk::CellRendererText::new();
+                cell.set_property_alignment(pango::Alignment::Right);
+                cell.set_property_xalign(1.0);
+                col.set_title(title);
+                col.pack_start(&cell, true);
+                col.add_attribute(&cell, "text", i as i32);
+                col.set_resizable(true);
+                results_tree.append_column(&col);
+            }
+
+            let result_store =
+                gtk::ListStore::new(col_entries.map(|(_, t)| t).collect::<Vec<_>>().as_slice());
+            results_tree.set_model(Some(&result_store));
+
+            self.result_stores.insert(recipe.id.clone(), result_store);
         }
     }
 }
