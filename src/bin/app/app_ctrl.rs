@@ -251,9 +251,27 @@ impl ApplicationController {
                 results_tree.append_column(&col);
             }
 
+            let results_scrolled_window: gtk::ScrolledWindow = result_builder
+                .get_object("results-scrolled-window")
+                .unwrap();
+            let autoscroll_toggle: gtk::ToggleButton =
+                result_builder.get_object("autoscroll-toggle").unwrap();
+            results_tree.connect_size_allocate(
+                clone!(results_scrolled_window, autoscroll_toggle => move |_,_| {
+                    if autoscroll_toggle.get_active() {
+                         let adj = results_scrolled_window.get_vadjustment().unwrap();
+                         adj.set_value(adj.get_upper() - adj.get_page_size());
+                    }
+                }),
+            );
+
             let result_store =
                 gtk::ListStore::new(col_entries.map(|(_, t)| t).collect::<Vec<_>>().as_slice());
             results_tree.set_model(Some(&result_store));
+
+            let clear_button: gtk::Button =
+                result_builder.get_object("clear-results-button").unwrap();
+            clear_button.connect_clicked(clone!(result_store => move |_| result_store.clear()));
 
             self.result_stores.insert(recipe.id.clone(), result_store);
         }
