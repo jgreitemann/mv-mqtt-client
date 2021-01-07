@@ -244,7 +244,6 @@ impl ApplicationController {
                 let col = gtk::TreeViewColumn::new();
                 let cell = gtk::CellRendererText::new();
                 cell.set_property_alignment(pango::Alignment::Right);
-                // cell.set_property_xalign(1.0);
                 col.set_title(title);
                 col.pack_start(&cell, true);
                 col.add_attribute(&cell, "text", i as i32);

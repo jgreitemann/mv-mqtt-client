@@ -45,6 +45,5 @@ pub fn regex_from_mqtt_wildcard(wildcard: &str) -> Regex {
             _ => subtopic,
         })
         .join("/");
-    println!("^{}$", expanded);
     Regex::new(&*format!("^{}$", expanded)).unwrap()
 }
