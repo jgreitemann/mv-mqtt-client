@@ -294,6 +294,10 @@ impl ApplicationController {
                 (0u32..(vals.len() as u32)).collect::<Vec<u32>>().as_slice(),
                 vals.as_slice(),
             );
+            self.results_stack
+                .as_ref()
+                .unwrap()
+                .set_visible_child_name(&result.recipe_id);
         }
     }
 }
