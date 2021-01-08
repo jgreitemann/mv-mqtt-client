@@ -256,14 +256,15 @@ impl ApplicationController {
                 .unwrap();
             let autoscroll_toggle: gtk::ToggleButton =
                 result_builder.get_object("autoscroll-toggle").unwrap();
-            results_tree.connect_size_allocate(
-                clone!(results_scrolled_window, autoscroll_toggle => move |_,_| {
-                    if autoscroll_toggle.get_active() {
-                         let adj = results_scrolled_window.get_vadjustment().unwrap();
-                         adj.set_value(adj.get_upper() - adj.get_page_size());
-                    }
-                }),
-            );
+            let autoscroll_capture = clone!(results_scrolled_window, autoscroll_toggle => move || {
+                if autoscroll_toggle.get_active() {
+                     let adj = results_scrolled_window.get_vadjustment().unwrap();
+                     adj.set_value(adj.get_upper() - adj.get_page_size());
+                }
+            });
+            autoscroll_toggle
+                .connect_toggled(clone!(autoscroll_capture => move |_| autoscroll_capture()));
+            results_tree.connect_size_allocate(move |_, _| autoscroll_capture());
 
             let result_store =
                 gtk::ListStore::new(col_entries.map(|(_, t)| t).collect::<Vec<_>>().as_slice());
