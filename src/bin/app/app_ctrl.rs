@@ -13,6 +13,7 @@ use mvjson::*;
 
 use super::client::Client;
 use super::helpers::*;
+use gtk::Orientation;
 
 pub struct ApplicationController {
     current: Option<Current>,
@@ -24,6 +25,7 @@ pub struct ApplicationController {
     actions_stack: Option<gtk::Stack>,
     state_machine_image: Option<gtk::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk::Image>>,
+    recipes_stack: Option<gtk::Stack>,
     results_stack: Option<gtk::Stack>,
     weak_client: Weak<RefCell<Client>>,
 }
@@ -66,6 +68,7 @@ impl ApplicationController {
             actions_stack: None,
             state_machine_image: None,
             menu_icons: enum_map! {_ => None},
+            recipes_stack: None,
             results_stack: None,
             weak_client,
         }
@@ -165,6 +168,7 @@ impl ApplicationController {
         offscreen_stack.remove(&recipes_submenu_box);
         recipes_submenu.add(&recipes_submenu_box);
 
+        self.recipes_stack = builder.get_object("recipes-stack");
         self.results_stack = builder.get_object("results-stack");
     }
 
@@ -206,6 +210,11 @@ impl ApplicationController {
     pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
         self.recipes_menu_section.remove_all();
 
+        let recipes_stack = self.recipes_stack.as_ref().unwrap();
+        for child in &recipes_stack.get_children() {
+            recipes_stack.remove(child);
+        }
+
         let results_stack = self.results_stack.as_ref().unwrap();
         for child in &results_stack.get_children() {
             results_stack.remove(child);
@@ -215,11 +224,36 @@ impl ApplicationController {
 
         for recipe in recipe_list {
             let short_desc = ellipt(&recipe.description, 25);
+
+            // Recipe menus
             self.recipes_menu_section.append(
                 Some(&*format!("{}: {}", recipe.id, &short_desc)),
                 Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
             );
 
+            // Recipes tab stack panes
+            let recipe_builder = gtk::Builder::from_file("res/ui/RecipesPane.ui");
+            let recipe_pane: gtk::ScrolledWindow = recipe_builder
+                .get_object("recipes-scrolled-window")
+                .unwrap();
+            recipes_stack.add(&recipe_pane);
+            recipes_stack.set_child_name(&recipe_pane, Some(&recipe.id));
+            recipes_stack.set_child_title(
+                &recipe_pane,
+                Some(&*format!("{}: {}", recipe.id, &short_desc)),
+            );
+            let recipe_desc: gtk::Label = recipe_builder.get_object("recipe-desc").unwrap();
+            let input_param_list: gtk::ListBox =
+                recipe_builder.get_object("input-param-list").unwrap();
+            let output_param_list: gtk::ListBox =
+                recipe_builder.get_object("output-param-list").unwrap();
+            recipe_desc.set_label(&recipe.description);
+            input_param_list.set_header_func(Some(Box::new(separator_header_func)));
+            output_param_list.set_header_func(Some(Box::new(separator_header_func)));
+            fill_param_rows(&input_param_list, recipe.inputs.iter());
+            fill_param_rows(&output_param_list, recipe.outputs.iter());
+
+            // Results tab stack panes
             let result_builder = gtk::Builder::from_file("res/ui/ResultsPane.ui");
             let result_pane: gtk::Box = result_builder.get_object("outer-box").unwrap();
             results_stack.add(&result_pane);
@@ -301,4 +335,34 @@ impl ApplicationController {
                 .set_visible_child_name(&result.recipe_id);
         }
     }
+}
+
+fn separator_header_func(row: &gtk::ListBoxRow, before_opt: Option<&gtk::ListBoxRow>) {
+    if before_opt.is_some() {
+        if row.get_header().is_none() {
+            let divider = gtk::Separator::new(Orientation::Horizontal);
+            divider.show();
+            row.set_header(Some(&divider));
+        }
+    } else {
+        row.set_header::<gtk::Widget>(None);
+    }
+}
+
+fn fill_param_rows<'a, T>(list_box: &gtk::ListBox, param_list: T)
+where
+    T: Iterator<Item = &'a RecipeParam>,
+{
+    let mut used = false;
+    for param in param_list {
+        used = true;
+        let row_builder = gtk::Builder::from_file("res/ui/RecipeParamRow.ui");
+        let row: gtk::ListBoxRow = row_builder.get_object("row").unwrap();
+        let param_name: gtk::Label = row_builder.get_object("param-name").unwrap();
+        let param_type: gtk::Label = row_builder.get_object("param-type").unwrap();
+        param_name.set_label(&param.name);
+        param_type.set_label(&*format!("{:?}", param.data_type));
+        list_box.add(&row);
+    }
+    AsRef::<gtk::Widget>::as_ref(list_box).set_visible(used);
 }

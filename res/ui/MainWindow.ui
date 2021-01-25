@@ -384,13 +384,29 @@
 					</packing>
 				</child>
 				<child>
-					<object class="GtkBox">
+					<object class="GtkPaned">
 						<property name="visible">True</property>
+						<property name="can-focus">True</property>
 						<child>
-							<object class="GtkLabel">
+							<object class="GtkStackSidebar">
 								<property name="visible">True</property>
-								<property name="label">Recipes</property>
+								<property name="can-focus">False</property>
+								<property name="stack">recipes-stack</property>
 							</object>
+							<packing>
+								<property name="resize">False</property>
+								<property name="shrink">True</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkStack" id="recipes-stack">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+							</object>
+							<packing>
+								<property name="resize">True</property>
+								<property name="shrink">True</property>
+							</packing>
 						</child>
 					</object>
 					<packing>
