@@ -55,7 +55,7 @@ impl ApplicationController {
 
         let mut state_machine_pixbufs = enum_map! { _ => None };
         for (state, pixbuf_opt) in &mut state_machine_pixbufs {
-            *pixbuf_opt = Pixbuf::from_file(format!("res/img/state_machine/{:?}.svg", state)).ok();
+            *pixbuf_opt = Pixbuf::from_file(format!("res/img/state_machine/{:?}.png", state)).ok();
         }
 
         ApplicationController {
