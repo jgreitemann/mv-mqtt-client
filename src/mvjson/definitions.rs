@@ -96,7 +96,7 @@ pub enum Action {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Current {
+pub struct SystemStatus {
     pub state: State,
     #[serde(default)]
     pub mode: Option<ModeType>,

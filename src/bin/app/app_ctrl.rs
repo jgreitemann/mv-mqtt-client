@@ -16,7 +16,7 @@ use super::helpers::*;
 use gtk::Orientation;
 
 pub struct ApplicationController {
-    current: Option<Current>,
+    status: Option<SystemStatus>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     recipes_menu: gio::Menu,
     recipes_menu_section: gio::Menu,
@@ -59,7 +59,7 @@ impl ApplicationController {
         }
 
         ApplicationController {
-            current: None,
+            status: None,
             g_actions,
             recipes_menu,
             recipes_menu_section,
@@ -77,11 +77,11 @@ impl ApplicationController {
     pub fn connect_callbacks(
         app: &gtk::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
-        current_rx: glib::Receiver<Current>,
+        status_rx: glib::Receiver<SystemStatus>,
         rlist_rx: glib::Receiver<Vec<Recipe>>,
         result_rx: glib::Receiver<VisionResult>,
     ) {
-        let current_rx_cell = Cell::new(Some(current_rx));
+        let status_rx_cell = Cell::new(Some(status_rx));
         let rlist_rx_cell = Cell::new(Some(rlist_rx));
         let result_rx_cell = Cell::new(Some(result_rx));
 
@@ -91,10 +91,10 @@ impl ApplicationController {
             icon_theme.append_search_path("res/icons/actions");
             ctrl_strong.borrow_mut().build_ui(app);
 
-            current_rx_cell.take().unwrap().attach(
+            status_rx_cell.take().unwrap().attach(
                 None,
-                clone!(ctrl => move |current| {
-                    ctrl.upgrade().unwrap().borrow_mut().update_current(current);
+                clone!(ctrl => move |status| {
+                    ctrl.upgrade().unwrap().borrow_mut().update_status(status);
                     glib::Continue(true)
                 }),
             );
@@ -184,9 +184,9 @@ impl ApplicationController {
             .unwrap();
     }
 
-    pub fn update_current(&mut self, current: Current) {
+    pub fn update_status(&mut self, status: SystemStatus) {
         for (allowed, g_action, icon_opt) in izip!(
-            available_actions(current.state).values(),
+            available_actions(status.state).values(),
             self.g_actions.values(),
             self.menu_icons.values()
         ) {
@@ -197,14 +197,14 @@ impl ApplicationController {
         }
 
         if let Some(stack) = &self.actions_stack {
-            stack.set_visible_child_name(&*format!("{:?}-pane", current.state).to_lowercase());
+            stack.set_visible_child_name(&*format!("{:?}-pane", status.state).to_lowercase());
         }
 
         if let Some(image) = &self.state_machine_image {
-            image.set_from_pixbuf(self.state_machine_pixbufs[current.state].as_ref());
+            image.set_from_pixbuf(self.state_machine_pixbufs[status.state].as_ref());
         }
 
-        self.current = Some(current);
+        self.status = Some(status);
     }
 
     pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
