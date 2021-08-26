@@ -119,42 +119,52 @@
 									</packing>
 								</child>
 								<child>
-									<object class="GtkButton">
+									<object class="GtkBox">
 										<property name="visible">True</property>
-										<property name="tooltip-text" translatable="yes">An unrecoverable error has occurred</property>
-										<property name="action-name">app.resolve-error</property>
 										<child>
-											<object class="GtkBox">
+											<object class="GtkButton">
 												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="halign">center</property>
-												<property name="spacing">4</property>
+												<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+												<property name="action-name">app.reset</property>
 												<child>
 													<object class="GtkImage">
 														<property name="visible">True</property>
 														<property name="can-focus">False</property>
-														<property name="icon-name">face-uncertain-symbolic</property>
+														<property name="icon-name">system-log-out-symbolic</property>
 													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
 												</child>
+												<style>
+													<class name="destructive-action"/>
+												</style>
+											</object>
+											<packing>
+												<property name="expand">True</property>
+												<property name="fill">True</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkButton">
+												<property name="visible">True</property>
+												<property name="tooltip-text" translatable="yes">Halt</property>
+												<property name="action-name">app.halt</property>
 												<child>
-													<object class="GtkLabel">
+													<object class="GtkImage">
 														<property name="visible">True</property>
 														<property name="can-focus">False</property>
-														<property name="label" translatable="yes">Error</property>
+														<property name="icon-name">halt-symbolic</property>
 													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
 												</child>
+												<style>
+													<class name="destructive-action"/>
+												</style>
 											</object>
+											<packing>
+												<property name="expand">True</property>
+												<property name="fill">True</property>
+											</packing>
 										</child>
 										<style>
-											<class name="destructive-action"/>
+											<class name="linked"/>
 										</style>
 									</object>
 									<packing>

@@ -14,6 +14,7 @@ pub fn available_actions(state: State) -> EnumMap<ActionType, bool> {
             _ => false
         },
         State::Error => enum_map! {
+            ActionType::Reset | ActionType::Halt => true,
             _ => false
         },
         State::Initialized => enum_map! {
