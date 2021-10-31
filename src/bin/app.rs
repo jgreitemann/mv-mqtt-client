@@ -26,8 +26,7 @@ impl App {
         let application = gtk::Application::new(
             Some("io.github.jgreitemann.mv-mqtt-client"),
             Default::default(),
-        )
-        .expect("Initialization failed...");
+        );
 
         let client = Arc::new(RefCell::new(Client::new("tcp://localhost:1883")));
 
@@ -67,7 +66,7 @@ impl App {
         }
     }
 
-    pub fn run(self: &App, args: Vec<String>) {
-        self.application.run(&args);
+    pub fn run(self: &App) {
+        self.application.run();
     }
 }

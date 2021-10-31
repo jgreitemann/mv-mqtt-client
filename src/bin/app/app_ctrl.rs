@@ -13,7 +13,7 @@ use mvjson::*;
 
 use super::client::Client;
 use super::helpers::*;
-use gtk::Orientation;
+use gtk::{Orientation, STYLE_PROPERTY_MARGIN};
 
 pub struct ApplicationController {
     status: Option<SystemStatus>,
@@ -31,7 +31,7 @@ pub struct ApplicationController {
 }
 
 impl ApplicationController {
-    pub fn new<T: gio::ActionMapExt>(map: &T, weak_client: Weak<RefCell<Client>>) -> Self {
+    pub fn new<T: gio::traits::ActionMapExt>(map: &T, weak_client: Weak<RefCell<Client>>) -> Self {
         let g_actions = enum_map! {
             ActionType::SelectModeAutomatic => gio::SimpleAction::new("select_automatic_mode", None),
             ActionType::PrepareRecipe => gio::SimpleAction::new("prepare_recipe",
@@ -87,7 +87,7 @@ impl ApplicationController {
 
         app.connect_activate(weak!(ctrl => move |app| {
             let ctrl_strong = ctrl.upgrade().unwrap();
-            let icon_theme = gtk::IconTheme::get_default().unwrap();
+            let icon_theme = gtk::IconTheme::default().unwrap();
             icon_theme.append_search_path("res/icons/actions");
             ctrl_strong.borrow_mut().build_ui(app);
 
@@ -123,7 +123,7 @@ impl ApplicationController {
                         mode: ModeType::Automatic
                     },
                     ActionType::PrepareRecipe => Action::PrepareRecipe {
-                        recipe_id: parameter.unwrap().get_str().unwrap().to_string()
+                        recipe_id: parameter.unwrap().str().unwrap().to_string()
                     },
                     ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
                     ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
@@ -140,36 +140,36 @@ impl ApplicationController {
 
     fn build_ui(&mut self, app: &gtk::Application) {
         let builder = gtk::Builder::from_file("res/ui/MainWindow.ui");
-        let window: gtk::ApplicationWindow = builder.get_object("window").unwrap();
+        let window: gtk::ApplicationWindow = builder.object("window").unwrap();
         window.set_application(Some(app));
 
-        self.actions_stack = builder.get_object("actions-stack");
-        self.state_machine_image = builder.get_object("statemachine-image");
+        self.actions_stack = builder.object("actions-stack");
+        self.state_machine_image = builder.object("statemachine-image");
         for (atype, icon_opt) in &mut self.menu_icons {
-            *icon_opt = builder.get_object(&*format!("{:?}-menu-icon", atype).to_lowercase());
+            *icon_opt = builder.object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
 
-        let recipes_popover: gtk::Popover = builder.get_object("recipes-popover").unwrap();
+        let recipes_popover: gtk::Popover = builder.object("recipes-popover").unwrap();
         recipes_popover.bind_model(Some(&self.recipes_menu), None);
 
-        let recipes_submenu: gtk::Box = builder.get_object("recipes-submenu").unwrap();
+        let recipes_submenu: gtk::Box = builder.object("recipes-submenu").unwrap();
         let recipes_submenu_offscreen_popover = gtk::PopoverMenu::new();
         recipes_submenu_offscreen_popover.bind_model(Some(&self.recipes_menu), None);
         let offscreen_stack: gtk::Stack = recipes_submenu_offscreen_popover
-            .get_child()
+            .child()
             .unwrap()
             .downcast()
             .unwrap();
-        let recipes_submenu_box: gtk::Box = offscreen_stack.get_children()[0]
+        let recipes_submenu_box: gtk::Box = offscreen_stack.children()[0]
             .clone()
             .downcast()
             .unwrap();
-        recipes_submenu_box.set_property_margin(0);
+        recipes_submenu_box.set_property(*STYLE_PROPERTY_MARGIN, 0).unwrap();
         offscreen_stack.remove(&recipes_submenu_box);
         recipes_submenu.add(&recipes_submenu_box);
 
-        self.recipes_stack = builder.get_object("recipes-stack");
-        self.results_stack = builder.get_object("results-stack");
+        self.recipes_stack = builder.object("recipes-stack");
+        self.results_stack = builder.object("results-stack");
     }
 
     fn react(&self, action: Action) {
@@ -211,12 +211,12 @@ impl ApplicationController {
         self.recipes_menu_section.remove_all();
 
         let recipes_stack = self.recipes_stack.as_ref().unwrap();
-        for child in &recipes_stack.get_children() {
+        for child in &recipes_stack.children() {
             recipes_stack.remove(child);
         }
 
         let results_stack = self.results_stack.as_ref().unwrap();
-        for child in &results_stack.get_children() {
+        for child in &results_stack.children() {
             results_stack.remove(child);
         }
 
@@ -234,7 +234,7 @@ impl ApplicationController {
             // Recipes tab stack panes
             let recipe_builder = gtk::Builder::from_file("res/ui/RecipesPane.ui");
             let recipe_pane: gtk::ScrolledWindow = recipe_builder
-                .get_object("recipes-scrolled-window")
+                .object("recipes-scrolled-window")
                 .unwrap();
             recipes_stack.add(&recipe_pane);
             recipes_stack.set_child_name(&recipe_pane, Some(&recipe.id));
@@ -242,11 +242,11 @@ impl ApplicationController {
                 &recipe_pane,
                 Some(&*format!("{}: {}", recipe.id, &short_desc)),
             );
-            let recipe_desc: gtk::Label = recipe_builder.get_object("recipe-desc").unwrap();
+            let recipe_desc: gtk::Label = recipe_builder.object("recipe-desc").unwrap();
             let input_param_list: gtk::ListBox =
-                recipe_builder.get_object("input-param-list").unwrap();
+                recipe_builder.object("input-param-list").unwrap();
             let output_param_list: gtk::ListBox =
-                recipe_builder.get_object("output-param-list").unwrap();
+                recipe_builder.object("output-param-list").unwrap();
             recipe_desc.set_label(&recipe.description);
             input_param_list.set_header_func(Some(Box::new(separator_header_func)));
             output_param_list.set_header_func(Some(Box::new(separator_header_func)));
@@ -255,7 +255,7 @@ impl ApplicationController {
 
             // Results tab stack panes
             let result_builder = gtk::Builder::from_file("res/ui/ResultsPane.ui");
-            let result_pane: gtk::Box = result_builder.get_object("outer-box").unwrap();
+            let result_pane: gtk::Box = result_builder.object("outer-box").unwrap();
             results_stack.add(&result_pane);
             results_stack.set_child_name(&result_pane, Some(&recipe.id));
             results_stack.set_child_title(
@@ -273,11 +273,11 @@ impl ApplicationController {
                         .map(|p| (p.name.as_str(), p.data_type.as_glib_type())),
                 );
 
-            let results_tree: gtk::TreeView = result_builder.get_object("results-tree").unwrap();
+            let results_tree: gtk::TreeView = result_builder.object("results-tree").unwrap();
             for (i, (title, _)) in col_entries.clone().enumerate() {
                 let col = gtk::TreeViewColumn::new();
                 let cell = gtk::CellRendererText::new();
-                cell.set_property_alignment(pango::Alignment::Right);
+                CellRendererTextExt::set_alignment(&cell, pango::Alignment::Right);
                 col.set_title(title);
                 col.pack_start(&cell, true);
                 col.add_attribute(&cell, "text", i as i32);
@@ -286,14 +286,14 @@ impl ApplicationController {
             }
 
             let results_scrolled_window: gtk::ScrolledWindow = result_builder
-                .get_object("results-scrolled-window")
+                .object("results-scrolled-window")
                 .unwrap();
             let autoscroll_toggle: gtk::ToggleButton =
-                result_builder.get_object("autoscroll-toggle").unwrap();
+                result_builder.object("autoscroll-toggle").unwrap();
             let autoscroll_capture = clone!(results_scrolled_window, autoscroll_toggle => move || {
-                if autoscroll_toggle.get_active() {
-                     let adj = results_scrolled_window.get_vadjustment().unwrap();
-                     adj.set_value(adj.get_upper() - adj.get_page_size());
+                if autoscroll_toggle.is_active() {
+                     let adj = results_scrolled_window.vadjustment();
+                     adj.set_value(adj.upper() - adj.page_size());
                 }
             });
             autoscroll_toggle
@@ -305,7 +305,7 @@ impl ApplicationController {
             results_tree.set_model(Some(&result_store));
 
             let clear_button: gtk::Button =
-                result_builder.get_object("clear-results-button").unwrap();
+                result_builder.object("clear-results-button").unwrap();
             clear_button.connect_clicked(clone!(result_store => move |_| result_store.clear()));
 
             self.result_stores.insert(recipe.id.clone(), result_store);
@@ -315,18 +315,17 @@ impl ApplicationController {
     pub fn new_result(&mut self, result: VisionResult) {
         if let Some(store) = self.result_stores.get(&result.recipe_id) {
             let ids: Vec<&dyn ToValue> = vec![&result.id, &result.job_id];
-            let vals: Vec<_> = ids
+            let vals: Vec<_> = std::iter::Iterator::zip((0u32..).into_iter(), ids
                 .into_iter()
                 .chain(
                     result
                         .content
                         .iter()
                         .map(|item| -> &dyn ToValue { &item.value }),
-                )
+                ))
                 .collect();
             store.insert_with_values(
                 None,
-                (0u32..(vals.len() as u32)).collect::<Vec<u32>>().as_slice(),
                 vals.as_slice(),
             );
             self.results_stack
@@ -339,7 +338,7 @@ impl ApplicationController {
 
 fn separator_header_func(row: &gtk::ListBoxRow, before_opt: Option<&gtk::ListBoxRow>) {
     if before_opt.is_some() {
-        if row.get_header().is_none() {
+        if row.header().is_none() {
             let divider = gtk::Separator::new(Orientation::Horizontal);
             divider.show();
             row.set_header(Some(&divider));
@@ -357,9 +356,9 @@ where
     for param in param_list {
         used = true;
         let row_builder = gtk::Builder::from_file("res/ui/RecipeParamRow.ui");
-        let row: gtk::ListBoxRow = row_builder.get_object("row").unwrap();
-        let param_name: gtk::Label = row_builder.get_object("param-name").unwrap();
-        let param_type: gtk::Label = row_builder.get_object("param-type").unwrap();
+        let row: gtk::ListBoxRow = row_builder.object("row").unwrap();
+        let param_name: gtk::Label = row_builder.object("param-name").unwrap();
+        let param_type: gtk::Label = row_builder.object("param-type").unwrap();
         param_name.set_label(&param.name);
         param_type.set_label(&*format!("{:?}", param.data_type));
         list_box.add(&row);

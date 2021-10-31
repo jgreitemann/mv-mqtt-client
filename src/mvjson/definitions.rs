@@ -159,12 +159,12 @@ impl glib::ToValue for ResultValue {
         }
     }
 
-    fn to_value_type(&self) -> Type {
+    fn value_type(&self) -> Type {
         match self {
-            ResultValue::Boolean(_) => Type::Bool,
+            ResultValue::Boolean(_) => Type::BOOL,
             ResultValue::Integer(_) => Type::I64,
             ResultValue::FloatingPoint(_) => Type::F64,
-            ResultValue::String(_) => Type::String,
+            ResultValue::String(_) => Type::STRING,
         }
     }
 }

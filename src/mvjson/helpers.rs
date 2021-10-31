@@ -44,7 +44,7 @@ pub fn available_actions(state: State) -> EnumMap<ActionType, bool> {
 impl DataType {
     pub fn as_glib_type(&self) -> glib::Type {
         match self {
-            DataType::Bool => glib::Type::Bool,
+            DataType::Bool => glib::Type::BOOL,
             DataType::Int8 => glib::Type::I64,
             DataType::UInt8 => glib::Type::I64,
             DataType::Int16 => glib::Type::I64,
@@ -55,8 +55,8 @@ impl DataType {
             DataType::UInt64 => glib::Type::I64,
             DataType::Float => glib::Type::F64,
             DataType::Double => glib::Type::F64,
-            DataType::String => glib::Type::String,
-            DataType::Variant => glib::Type::String,
+            DataType::String => glib::Type::STRING,
+            DataType::Variant => glib::Type::STRING,
         }
     }
 }
