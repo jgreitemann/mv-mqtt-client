@@ -1,379 +1,284 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-	<requires lib="gtk+" version="3.22"/>
+	<requires lib="gtk" version="4.0"/>
 	<object id="window" class="GtkApplicationWindow">
-		<property name="visible">True</property>
+		<property name="visible">1</property>
 		<property name="default-width">800</property>
 		<property name="default-height">600</property>
 		<child type="titlebar">
 			<object class="GtkHeaderBar">
-				<property name="visible">True</property>
-				<property name="show-close-button">True</property>
 				<child type="title">
 					<object class="GtkStackSwitcher">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
 						<property name="stack">content-stack</property>
 					</object>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
 						<property name="spacing">6</property>
 						<child>
 							<object class="GtkStack" id="actions-stack">
-								<property name="visible">True</property>
 								<child>
-									<object class="GtkBox">
-										<property name="visible">True</property>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Select automatic mode</property>
-												<property name="action-name">app.select_automatic_mode</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">select-mode-automatic-symbolic</property>
-													</object>
-												</child>
-												<style>
-													<class name="suggested-action"/>
-												</style>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Halt</property>
-												<property name="action-name">app.halt</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">halt-symbolic</property>
-													</object>
-												</child>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<style>
-											<class name="linked"/>
-										</style>
-									</object>
-									<packing>
+									<object class="GtkStackPage">
 										<property name="name">preoperational-pane</property>
 										<property name="title" translatable="yes">Preoperational</property>
-									</packing>
+										<property name="child">
+											<object class="GtkBox">
+												<child>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Select automatic mode</property>
+														<property name="action-name">app.select_automatic_mode</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">select-mode-automatic-symbolic</property>
+															</object>
+														</child>
+														<style>
+															<class name="suggested-action"/>
+														</style>
+													</object>
+												</child>
+												<child>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Halt</property>
+														<property name="action-name">app.halt</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">halt-symbolic</property>
+															</object>
+														</child>
+													</object>
+												</child>
+												<style>
+													<class name="linked"/>
+												</style>
+											</object>
+										</property>
+									</object>
 								</child>
 								<child>
-									<object class="GtkButton">
-										<property name="visible">True</property>
-										<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
-										<property name="action-name">app.reset</property>
-										<child>
-											<object class="GtkBox">
-												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="halign">center</property>
-												<property name="spacing">4</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">system-log-out-symbolic</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-												<child>
-													<object class="GtkLabel">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="label" translatable="yes">Reset</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-											</object>
-										</child>
-										<style>
-											<class name="suggested-action"/>
-										</style>
-									</object>
-									<packing>
+									<object class="GtkStackPage">
 										<property name="name">halted-pane</property>
 										<property name="title" translatable="yes">Halted</property>
-									</packing>
-								</child>
-								<child>
-									<object class="GtkBox">
-										<property name="visible">True</property>
-										<child>
+										<property name="child">
 											<object class="GtkButton">
-												<property name="visible">True</property>
 												<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
 												<property name="action-name">app.reset</property>
 												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">system-log-out-symbolic</property>
+													<object class="GtkBox">
+														<property name="halign">center</property>
+														<property name="spacing">4</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">system-log-out-symbolic</property>
+															</object>
+														</child>
+														<child>
+															<object class="GtkLabel">
+																<property name="label" translatable="yes">Reset</property>
+															</object>
+														</child>
 													</object>
 												</child>
-												<style>
-													<class name="destructive-action"/>
-												</style>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Halt</property>
-												<property name="action-name">app.halt</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">halt-symbolic</property>
-													</object>
-												</child>
-												<style>
-													<class name="destructive-action"/>
-												</style>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<style>
-											<class name="linked"/>
-										</style>
-									</object>
-									<packing>
-										<property name="name">error-pane</property>
-										<property name="title" translatable="yes">Error</property>
-									</packing>
-								</child>
-								<child>
-									<object class="GtkBox">
-										<property name="visible">True</property>
-										<child>
-											<object class="GtkMenuButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Choose a recipe to prepare</property>
-												<property name="popover">recipes-popover</property>
 												<style>
 													<class name="suggested-action"/>
 												</style>
-												<child>
-													<placeholder/>
-												</child>
 											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
-												<property name="action-name">app.reset</property>
+										</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStackPage">
+										<property name="name">error-pane</property>
+										<property name="title" translatable="yes">Error</property>
+										<property name="child">
+											<object class="GtkBox">
 												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">system-log-out-symbolic</property>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+														<property name="action-name">app.reset</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">system-log-out-symbolic</property>
+															</object>
+														</child>
+														<style>
+															<class name="destructive-action"/>
+														</style>
+													</object>
+												</child>
+												<child>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Halt</property>
+														<property name="action-name">app.halt</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">halt-symbolic</property>
+															</object>
+														</child>
+														<style>
+															<class name="destructive-action"/>
+														</style>
+													</object>
+												</child>
+												<style>
+													<class name="linked"/>
+												</style>
+											</object>
+										</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStackPage">
+										<property name="name">initialized-pane</property>
+										<property name="title" translatable="yes">Initialized</property>
+										<property name="child">
+											<object class="GtkBox">
+												<child>
+													<object class="GtkMenuButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Choose a recipe to prepare</property>
+														<property name="popover">recipes-popover</property>
+														<style>
+															<class name="suggested-action"/>
+														</style>
+														<child>
+															<placeholder/>
+														</child>
+													</object>
+												</child>
+												<child>
+													<object class="GtkButton">
+														<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+														<property name="action-name">app.reset</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">system-log-out-symbolic</property>
+															</object>
+														</child>
+														<style>
+															<class name="destructive-action"/>
+														</style>
+													</object>
+												</child>
+												<style>
+													<class name="linked"/>
+												</style>
+											</object>
+										</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStackPage">
+										<property name="name">ready-pane</property>
+										<property name="title" translatable="yes">Ready</property>
+										<property name="child">
+											<object class="GtkBox">
+												<child>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Start a single job</property>
+														<property name="action-name">app.start_single_job</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">start-single-job-symbolic</property>
+															</object>
+														</child>
+													</object>
+												</child>
+												<child>
+													<object class="GtkButton">
+														<property name="hexpand">1</property>
+														<property name="tooltip-text" translatable="yes">Start a continuous execution</property>
+														<property name="action-name">app.start_continuous</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">start-continuous-symbolic</property>
+															</object>
+														</child>
+													</object>
+												</child>
+												<style>
+													<class name="linked"/>
+												</style>
+											</object>
+										</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStackPage">
+										<property name="name">singleexecution-pane</property>
+										<property name="title" translatable="yes">SingleExecution</property>
+										<property name="child">
+											<object class="GtkButton">
+												<property name="tooltip-text" translatable="yes">Stop the current execution</property>
+												<property name="action-name">app.stop</property>
+												<child>
+													<object class="GtkBox">
+														<property name="halign">center</property>
+														<property name="spacing">4</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">media-playback-stop-symbolic</property>
+															</object>
+														</child>
+														<child>
+															<object class="GtkLabel">
+																<property name="label" translatable="yes">Stop</property>
+															</object>
+														</child>
 													</object>
 												</child>
 												<style>
 													<class name="destructive-action"/>
 												</style>
 											</object>
-											<packing>
-												<property name="expand">False</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<style>
-											<class name="linked"/>
-										</style>
+										</property>
 									</object>
-									<packing>
-										<property name="name">initialized-pane</property>
-										<property name="title" translatable="yes">Initialized</property>
-									</packing>
 								</child>
 								<child>
-									<object class="GtkBox">
-										<property name="visible">True</property>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Start a single job</property>
-												<property name="action-name">app.start_single_job</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="icon-name">start-single-job-symbolic</property>
-													</object>
-												</child>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<child>
-											<object class="GtkButton">
-												<property name="visible">True</property>
-												<property name="tooltip-text" translatable="yes">Start a continuous execution</property>
-												<property name="action-name">app.start_continuous</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="icon-name">start-continuous-symbolic</property>
-													</object>
-												</child>
-											</object>
-											<packing>
-												<property name="expand">True</property>
-												<property name="fill">True</property>
-											</packing>
-										</child>
-										<style>
-											<class name="linked"/>
-										</style>
-									</object>
-									<packing>
-										<property name="name">ready-pane</property>
-										<property name="title" translatable="yes">Ready</property>
-									</packing>
-								</child>
-								<child>
-									<object class="GtkButton">
-										<property name="visible">True</property>
-										<property name="tooltip-text" translatable="yes">Stop the current execution</property>
-										<property name="action-name">app.stop</property>
-										<child>
-											<object class="GtkBox">
-												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="halign">center</property>
-												<property name="spacing">4</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">media-playback-stop-symbolic</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-												<child>
-													<object class="GtkLabel">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="label" translatable="yes">Stop</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-											</object>
-										</child>
-										<style>
-											<class name="destructive-action"/>
-										</style>
-									</object>
-									<packing>
-										<property name="name">singleexecution-pane</property>
-										<property name="title" translatable="yes">SingleExecution</property>
-									</packing>
-								</child>
-								<child>
-									<object class="GtkButton">
-										<property name="visible">True</property>
-										<property name="tooltip-text" translatable="yes">Stop the current execution</property>
-										<property name="action-name">app.stop</property>
-										<child>
-											<object class="GtkBox">
-												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="halign">center</property>
-												<property name="spacing">4</property>
-												<child>
-													<object class="GtkImage">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="icon-name">media-playback-stop-symbolic</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-												<child>
-													<object class="GtkLabel">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<property name="label" translatable="yes">Stop</property>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-													</packing>
-												</child>
-											</object>
-										</child>
-										<style>
-											<class name="destructive-action"/>
-										</style>
-									</object>
-									<packing>
+									<object class="GtkStackPage">
 										<property name="name">continuousexecution-pane</property>
 										<property name="title" translatable="yes">ContinuousExecution</property>
-									</packing>
+										<property name="child">
+											<object class="GtkButton">
+												<property name="tooltip-text" translatable="yes">Stop the current execution</property>
+												<property name="action-name">app.stop</property>
+												<child>
+													<object class="GtkBox">
+														<property name="halign">center</property>
+														<property name="spacing">4</property>
+														<child>
+															<object class="GtkImage">
+																<property name="icon-name">media-playback-stop-symbolic</property>
+															</object>
+														</child>
+														<child>
+															<object class="GtkLabel">
+																<property name="label" translatable="yes">Stop</property>
+															</object>
+														</child>
+													</object>
+												</child>
+												<style>
+													<class name="destructive-action"/>
+												</style>
+											</object>
+										</property>
+									</object>
 								</child>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkMenuButton">
-								<property name="visible">True</property>
 								<property name="popover">actions-popover</property>
 								<child>
 									<placeholder/>
 								</child>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
 				</child>
@@ -381,190 +286,124 @@
 		</child>
 		<child>
 			<object class="GtkStack" id="content-stack">
-				<property name="visible">True</property>
 				<child>
-					<object class="GtkImage" id="statemachine-image">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
-						<property name="file">res/img/state_machine/preoperational.png</property>
-					</object>
-					<packing>
+					<object class="GtkStackPage">
 						<property name="name">statemachine</property>
 						<property name="title" translatable="yes">State Machine</property>
-					</packing>
+						<property name="child">
+							<object class="GtkImage" id="statemachine-image">
+								<property name="file">res/img/state_machine/preoperational.png</property>
+							</object>
+						</property>
+					</object>
 				</child>
 				<child>
-					<object class="GtkPaned">
-						<property name="visible">True</property>
-						<property name="can-focus">True</property>
-						<child>
-							<object class="GtkStackSidebar">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-								<property name="stack">recipes-stack</property>
-							</object>
-							<packing>
-								<property name="resize">False</property>
-								<property name="shrink">True</property>
-							</packing>
-						</child>
-						<child>
-							<object class="GtkStack" id="recipes-stack">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-							</object>
-							<packing>
-								<property name="resize">True</property>
-								<property name="shrink">True</property>
-							</packing>
-						</child>
-					</object>
-					<packing>
+					<object class="GtkStackPage">
 						<property name="name">recipes</property>
 						<property name="title" translatable="yes">Recipes</property>
-					</packing>
+						<property name="child">
+							<object class="GtkPaned">
+								<property name="resize-start-child">0</property>
+								<property name="focusable">1</property>
+								<child>
+									<object class="GtkStackSidebar">
+										<property name="stack">recipes-stack</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStack" id="recipes-stack"/>
+								</child>
+							</object>
+						</property>
+					</object>
 				</child>
 				<child>
-					<object class="GtkPaned">
-						<property name="visible">True</property>
-						<property name="can-focus">True</property>
-						<child>
-							<object class="GtkStackSidebar">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-								<property name="stack">results-stack</property>
-							</object>
-							<packing>
-								<property name="resize">False</property>
-								<property name="shrink">True</property>
-							</packing>
-						</child>
-						<child>
-							<object class="GtkStack" id="results-stack">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-							</object>
-							<packing>
-								<property name="resize">True</property>
-								<property name="shrink">True</property>
-							</packing>
-						</child>
-					</object>
-					<packing>
+					<object class="GtkStackPage">
 						<property name="name">result</property>
 						<property name="title" translatable="yes">Results</property>
-					</packing>
+						<property name="child">
+							<object class="GtkPaned">
+								<property name="resize-start-child">0</property>
+								<property name="focusable">1</property>
+								<child>
+									<object class="GtkStackSidebar">
+										<property name="stack">results-stack</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkStack" id="results-stack"/>
+								</child>
+							</object>
+						</property>
+					</object>
 				</child>
 			</object>
 		</child>
 	</object>
 	<object class="GtkPopoverMenu" id="actions-popover">
-		<property name="can-focus">False</property>
-		<child>
+		<property name="child">
 			<object class="GtkBox">
-				<property name="visible">True</property>
 				<property name="orientation">vertical</property>
-				<property name="margin">10</property>
+				<property name="margin-start">10</property>
+				<property name="margin-end">10</property>
+				<property name="margin-top">10</property>
+				<property name="margin-bottom">10</property>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="selectmodeautomatic-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">select-mode-automatic-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Select Automatic Mode</property>
 								<property name="action-name">app.select_automatic_mode</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="reset-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">system-log-out-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Reset to Preoperational</property>
 								<property name="action-name">app.reset</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="halt-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">halt-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Halt</property>
 								<property name="action-name">app.halt</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
-					<object class="GtkSeparator">
-						<property name="visible">True</property>
-					</object>
+					<object class="GtkSeparator"/>
 				</child>
 				<child>
 					<object class="GtkModelButton">
@@ -581,162 +420,83 @@
 					</object>
 				</child>
 				<child>
-					<object class="GtkSeparator">
-						<property name="visible">True</property>
-					</object>
+					<object class="GtkSeparator"/>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="startsinglejob-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">start-single-job-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Start Single Job</property>
 								<property name="action-name">app.start_single_job</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="startcontinuous-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">start-continuous-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Start Continuous</property>
 								<property name="action-name">app.start_continuous</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="stop-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">media-playback-stop-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Stop Current Execution</property>
 								<property name="action-name">app.stop</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 				<child>
 					<object class="GtkBox">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
+						<property name="vexpand">1</property>
 						<child>
 							<object class="GtkImage" id="abort-menu-icon">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
 								<property name="icon-name">process-stop-symbolic</property>
 							</object>
-							<packing>
-								<property name="expand">False</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 						<child>
 							<object class="GtkModelButton">
+								<property name="hexpand">1</property>
 								<property name="visible">True</property>
 								<property name="text" translatable="yes">Abort Current Execution</property>
 								<property name="action-name">app.abort</property>
 							</object>
-							<packing>
-								<property name="expand">True</property>
-								<property name="fill">True</property>
-							</packing>
 						</child>
 					</object>
-					<packing>
-						<property name="expand">True</property>
-						<property name="fill">True</property>
-					</packing>
 				</child>
 			</object>
-		</child>
-		<child>
-			<object class="GtkBox" id="recipes-submenu">
-				<property name="visible">True</property>
-				<property name="orientation">vertical</property>
-				<property name="margin">10</property>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="can-focus">False</property>
-						<property name="inverted">True</property>
-						<property name="centered">True</property>
-						<property name="menu-name">main</property>
-						<property name="text" translatable="yes">Back</property>
-					</object>
-				</child>
-			</object>
-			<packing>
-				<property name="submenu">recipes-submenu</property>
-			</packing>
-		</child>
+		</property>
 	</object>
-	<object class="GtkPopover" id="recipes-popover">
-		<property name="can-focus">False</property>
-	</object>
+	<object class="GtkPopoverMenu" id="recipes-popover"/>
+	<object class="GtkPopoverMenu" id="recipes-submenu"/>
 </interface>
