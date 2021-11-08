@@ -54,7 +54,10 @@ impl ApplicationController {
 
         let mut state_machine_pixbufs = enum_map! { _ => None };
         for (state, pixbuf_opt) in &mut state_machine_pixbufs {
-            *pixbuf_opt = Pixbuf::from_file(format!("res/img/state_machine/{:?}.png", state)).ok();
+            *pixbuf_opt = Pixbuf::from_resource(
+                resource_path(&format!("state-machine/{:?}.png", state)).as_str(),
+            )
+            .ok();
         }
 
         ApplicationController {
@@ -86,8 +89,6 @@ impl ApplicationController {
 
         app.connect_activate(weak!(ctrl => move |app| {
             let ctrl_strong = ctrl.upgrade().unwrap();
-            let icon_theme = gtk4::IconTheme::default();
-            icon_theme.add_search_path("res/icons/actions");
             ctrl_strong.borrow_mut().build_ui(app);
 
             status_rx_cell.take().unwrap().attach(
@@ -138,7 +139,7 @@ impl ApplicationController {
     }
 
     fn build_ui(&mut self, app: &gtk4::Application) {
-        let builder = gtk4::Builder::from_file("res/ui/MainWindow.ui");
+        let builder = gtk4::Builder::from_resource(resource_path("MainWindow.ui").as_str());
         let window: gtk4::ApplicationWindow = builder.object("window").unwrap();
         window.set_application(Some(app));
 
@@ -220,7 +221,8 @@ impl ApplicationController {
             );
 
             // Recipes tab stack panes
-            let recipe_builder = gtk4::Builder::from_file("res/ui/RecipesPane.ui");
+            let recipe_builder =
+                gtk4::Builder::from_resource(resource_path("RecipesPane.ui").as_str());
             let recipe_pane: gtk4::ScrolledWindow =
                 recipe_builder.object("recipes-scrolled-window").unwrap();
             recipes_stack.add_titled(
@@ -238,7 +240,8 @@ impl ApplicationController {
             fill_param_rows(&output_param_list, recipe.outputs.iter());
 
             // Results tab stack panes
-            let result_builder = gtk4::Builder::from_file("res/ui/ResultsPane.ui");
+            let result_builder =
+                gtk4::Builder::from_resource(resource_path("ResultsPane.ui").as_str());
             let result_pane: gtk4::Box = result_builder.object("outer-box").unwrap();
             results_stack.add_titled(
                 &result_pane,
@@ -322,7 +325,7 @@ where
     let mut used = false;
     for param in param_list {
         used = true;
-        let row_builder = gtk4::Builder::from_file("res/ui/RecipeParamRow.ui");
+        let row_builder = gtk4::Builder::from_resource(resource_path("RecipeParamRow.ui").as_str());
         let row: gtk4::ListBoxRow = row_builder.object("row").unwrap();
         let param_name: gtk4::Label = row_builder.object("param-name").unwrap();
         let param_type: gtk4::Label = row_builder.object("param-type").unwrap();
@@ -331,4 +334,8 @@ where
         list_box.append(&row);
     }
     AsRef::<gtk4::Widget>::as_ref(list_box).set_visible(used);
+}
+
+fn resource_path(resource_subpath: &str) -> String {
+    format!("/io/github/jgreitemann/mv-mqtt-client/{}", resource_subpath)
 }
