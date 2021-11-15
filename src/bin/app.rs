@@ -18,14 +18,14 @@ use mvjson::*;
 
 #[allow(dead_code)]
 pub struct App {
-    application: gtk4::Application,
+    application: adw::Application,
     client: Arc<RefCell<Client>>,
     app_ctrl: Arc<RefCell<ApplicationController>>,
 }
 
 impl App {
     pub fn new() -> Self {
-        let application = gtk4::Application::new(
+        let application = adw::Application::new(
             Some("io.github.jgreitemann.mv-mqtt-client"),
             Default::default(),
         );

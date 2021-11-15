@@ -6,6 +6,7 @@ use gdk_pixbuf::Pixbuf;
 use gio::prelude::*;
 use glib::{ToValue, VariantType};
 use gtk4::prelude::*;
+use libadwaita as adw;
 
 use enum_map::{enum_map, EnumMap};
 use itertools::izip;
@@ -71,7 +72,7 @@ impl ApplicationController {
     }
 
     pub fn connect_callbacks(
-        app: &gtk4::Application,
+        app: &adw::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
         status_rx: glib::Receiver<SystemStatus>,
         rlist_rx: glib::Receiver<Vec<Recipe>>,
@@ -132,9 +133,9 @@ impl ApplicationController {
         }
     }
 
-    fn build_ui(&mut self, app: &gtk4::Application) {
+    fn build_ui(&mut self, app: &adw::Application) {
         let builder = gtk4::Builder::from_resource(resource_path("MainWindow.ui").as_str());
-        let window: gtk4::ApplicationWindow = builder.object("window").unwrap();
+        let window: adw::ApplicationWindow = builder.object("window").unwrap();
         window.set_application(Some(app));
 
         self.actions_stack = builder.object("actions-stack");
