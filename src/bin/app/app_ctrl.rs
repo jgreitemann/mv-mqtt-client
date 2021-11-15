@@ -2,6 +2,7 @@ use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::sync::{Arc, Weak};
 
+use adw::prelude::*;
 use gdk_pixbuf::Pixbuf;
 use gio::prelude::*;
 use glib::{ToValue, VariantType};
@@ -218,12 +219,13 @@ impl ApplicationController {
                 Some(&recipe.id),
                 format!("{}: {}", recipe.id, &short_desc).as_str(),
             );
-            let recipe_desc: gtk4::Label = recipe_builder.object("recipe-desc").unwrap();
-            let input_param_list: gtk4::ListBox =
+            let recipe_desc_group: adw::PreferencesGroup =
+                recipe_builder.object("recipe-desc-group").unwrap();
+            let input_param_list: adw::PreferencesGroup =
                 recipe_builder.object("input-param-list").unwrap();
-            let output_param_list: gtk4::ListBox =
+            let output_param_list: adw::PreferencesGroup =
                 recipe_builder.object("output-param-list").unwrap();
-            recipe_desc.set_label(&recipe.description);
+            recipe_desc_group.add(&adw::ActionRow::builder().title(&recipe.description).build());
             fill_param_rows(&input_param_list, recipe.inputs.iter());
             fill_param_rows(&output_param_list, recipe.outputs.iter());
 
@@ -321,22 +323,27 @@ impl ApplicationController {
     }
 }
 
-fn fill_param_rows<'a, T>(list_box: &gtk4::ListBox, param_list: T)
+fn fill_param_rows<'a, T>(group: &adw::PreferencesGroup, param_list: T)
 where
     T: Iterator<Item = &'a RecipeParam>,
 {
     let mut used = false;
     for param in param_list {
         used = true;
-        let row_builder = gtk4::Builder::from_resource(resource_path("RecipeParamRow.ui").as_str());
-        let row: gtk4::ListBoxRow = row_builder.object("row").unwrap();
-        let param_name: gtk4::Label = row_builder.object("param-name").unwrap();
-        let param_type: gtk4::Label = row_builder.object("param-type").unwrap();
-        param_name.set_label(&param.name);
-        param_type.set_label(&*format!("{:?}", param.data_type));
-        list_box.append(&row);
+        let row = adw::ActionRow::builder()
+            .selectable(false)
+            .title(&param.name)
+            .subtitle(&param.description)
+            .build();
+        row.add_suffix(
+            &gtk4::Label::builder()
+                .label(&*format!("{:?}", param.data_type))
+                .css_classes(vec!["dim-label".to_string()])
+                .build(),
+        );
+        group.add(&row);
     }
-    AsRef::<gtk4::Widget>::as_ref(list_box).set_visible(used);
+    AsRef::<gtk4::Widget>::as_ref(group).set_visible(used);
 }
 
 fn resource_path(resource_subpath: &str) -> String {

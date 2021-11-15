@@ -2,7 +2,6 @@
 <gresources>
 	<gresource prefix="/io/github/jgreitemann/mv-mqtt-client">
 		<file compressed="true" preprocess="xml-stripblanks" alias="MainWindow.ui">ui/MainWindow.ui</file>
-		<file compressed="true" preprocess="xml-stripblanks" alias="RecipeParamRow.ui">ui/RecipeParamRow.ui</file>
 		<file compressed="true" preprocess="xml-stripblanks" alias="RecipesPane.ui">ui/RecipesPane.ui</file>
 		<file compressed="true" preprocess="xml-stripblanks" alias="ResultsPane.ui">ui/ResultsPane.ui</file>
 	</gresource>

@@ -1,98 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
 	<requires lib="gtk" version="4.0"/>
+	<requires lib="libadwaita" version="1.0"/>
 	<object class="GtkScrolledWindow" id="recipes-scrolled-window">
 		<property name="focusable">1</property>
 		<property name="has-frame">1</property>
 		<property name="child">
 			<object class="GtkViewport">
 				<property name="child">
-					<object class="GtkBox" id="mainBox">
-						<property name="orientation">vertical</property>
-						<property name="halign">center</property>
-						<property name="margin-start">36</property>
-						<property name="margin-end">36</property>
-						<property name="margin-top">36</property>
-						<property name="margin-bottom">36</property>
-						<property name="spacing">12</property>
-						<property name="width-request">460</property>
-						<child>
-							<object class="GtkLabel">
-								<property name="visible" bind-source="description-list" bind-property="visible"
-								          bind-flags="sync-create"/>
-								<property name="halign">start</property>
-								<property name="hexpand">1</property>
-								<property name="label" translatable="yes">Recipe Description</property>
-								<attributes>
-									<attribute name="weight" value="bold"></attribute>
-								</attributes>
-							</object>
-						</child>
-						<child>
-							<object class="GtkListBox" id="description-list">
-								<property name="selection_mode">none</property>
+					<object class="AdwClamp" id="mainBox">
+						<property name="maximum-size">460</property>
+						<property name="child">
+							<object class="GtkBox">
+								<property name="orientation">vertical</property>
+								<property name="spacing">24</property>
+								<property name="margin-top">36</property>
+								<property name="margin-bottom">36</property>
+								<property name="margin-start">12</property>
+								<property name="margin-end">12</property>
 								<child>
-									<object class="GtkListBoxRow">
-										<property name="child">
-											<object class="GtkLabel" id="recipe-desc">
-													 <property name="halign">start</property>
-													 <property name="hexpand">1</property>
-													 <property name="vexpand">1</property>
-													 <property name="wrap">1</property>
-											</object>
-										</property>
+									<object class="AdwPreferencesGroup" id="recipe-desc-group">
+										<property name="title" translatable="yes">Recipe Description</property>
 									</object>
 								</child>
-								<style>
-									<class name="rich-list"/>
-									<class name="frame"/>
-								</style>
+								<child>
+									<object class="AdwPreferencesGroup" id="input-param-list">
+										<property name="title" translatable="yes">Input parameters</property>
+									</object>
+								</child>
+								<child>
+									<object class="AdwPreferencesGroup" id="output-param-list">
+										<property name="title" translatable="yes">Output parameters (Results)</property>
+									</object>
+								</child>
 							</object>
-						</child>
-						<child>
-							<object class="GtkLabel">
-								<property name="visible" bind-source="input-param-list" bind-property="visible"
-								          bind-flags="sync-create"/>
-								<property name="halign">start</property>
-								<property name="hexpand">1</property>
-								<property name="label" translatable="yes">Input parameters</property>
-								<attributes>
-									<attribute name="weight" value="bold"></attribute>
-								</attributes>
-							</object>
-						</child>
-						<child>
-							<object class="GtkListBox" id="input-param-list">
-								<property name="selection_mode">none</property>
-								<property name="show_separators">1</property>
-								<style>
-									<class name="rich-list"/>
-									<class name="frame"/>
-								</style>
-							</object>
-						</child>
-						<child>
-							<object class="GtkLabel">
-								<property name="visible" bind-source="output-param-list" bind-property="visible"
-								          bind-flags="sync-create"/>
-								<property name="halign">start</property>
-								<property name="hexpand">1</property>
-								<property name="label" translatable="yes">Output parameters (Results)</property>
-								<attributes>
-									<attribute name="weight" value="bold"></attribute>
-								</attributes>
-							</object>
-						</child>
-						<child>
-							<object class="GtkListBox" id="output-param-list">
-								<property name="selection_mode">none</property>
-								<property name="show_separators">1</property>
-								<style>
-									<class name="rich-list"/>
-									<class name="frame"/>
-								</style>
-							</object>
-						</child>
+						</property>
 					</object>
 				</property>
 			</object>
