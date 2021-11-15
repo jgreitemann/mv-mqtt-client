@@ -31,6 +31,7 @@
 												<property name="title" translatable="yes">Preoperational</property>
 												<property name="child">
 													<object class="GtkBox">
+														<property name="spacing">6</property>
 														<child>
 															<object class="GtkButton">
 																<property name="hexpand">1</property>
@@ -58,9 +59,6 @@
 																</child>
 															</object>
 														</child>
-														<style>
-															<class name="linked"/>
-														</style>
 													</object>
 												</property>
 											</object>
@@ -101,41 +99,13 @@
 												<property name="name">error-pane</property>
 												<property name="title" translatable="yes">Error</property>
 												<property name="child">
-													<object class="GtkBox">
-														<child>
-															<object class="GtkButton">
-																<property name="hexpand">1</property>
-																<property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
-																<property name="action-name">app.reset</property>
-																<child>
-																	<object class="GtkImage">
-																		<property name="icon-name">system-log-out-symbolic</property>
-																	</object>
-																</child>
-																<style>
-																	<class name="destructive-action"/>
-																</style>
-															</object>
-														</child>
-														<child>
-															<object class="GtkButton">
-																<property name="hexpand">1</property>
-																<property name="tooltip-text" translatable="yes">Halt</property>
-																<property name="action-name">app.halt</property>
-																<child>
-																	<object class="GtkImage">
-																		<property name="icon-name">halt-symbolic</property>
-																	</object>
-																</child>
-																<style>
-																	<class name="destructive-action"/>
-																</style>
-															</object>
-														</child>
-														<style>
-															<class name="linked"/>
-														</style>
-													</object>
+													 <object class="GtkButton">
+														 <property name="hexpand">1</property>
+														 <property name="tooltip-text" translatable="yes">Reset to Preoperational</property>
+														 <property name="label" translatable="yes">Reset</property>
+														 <property name="action-name">app.reset</property>
+														 <property name="icon-name">system-log-out-symbolic</property>
+													 </object>
 												</property>
 											</object>
 										</child>
@@ -145,10 +115,13 @@
 												<property name="title" translatable="yes">Initialized</property>
 												<property name="child">
 													<object class="GtkBox">
+														<property name="spacing">3</property>
 														<child>
 															<object class="GtkMenuButton">
 																<property name="hexpand">1</property>
 																<property name="tooltip-text" translatable="yes">Choose a recipe to prepare</property>
+																<property name="icon-name">text-x-generic-symbolic</property>
+																<property name="always-show-arrow">True</property>
 																<property name="menu-model">recipes-popover</property>
 																<style>
 																	<class name="suggested-action"/>
@@ -167,14 +140,8 @@
 																		<property name="icon-name">system-log-out-symbolic</property>
 																	</object>
 																</child>
-																<style>
-																	<class name="destructive-action"/>
-																</style>
 															</object>
 														</child>
-														<style>
-															<class name="linked"/>
-														</style>
 													</object>
 												</property>
 											</object>
