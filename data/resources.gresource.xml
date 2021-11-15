@@ -10,7 +10,7 @@
 		<file compressed="true" alias="halt-symbolic.svg">icons/actions/halt-symbolic.svg</file>
 		<file compressed="true" alias="select-mode-automatic-symbolic.svg">icons/actions/select-mode-automatic-symbolic.svg</file>
 		<file compressed="true" alias="start-continuous-symbolic.svg">icons/actions/start-continuous-symbolic.svg</file>
-		<file compressed="true" alias="start-single-job-symbolic.svg">icons/actions/start-single-job-symbolic.svg</file>
+		<file compressed="true" alias="view-sidebar-start-symbolic.svg">icons/actions/view-sidebar-start-symbolic.svg</file>
 	</gresource>
 	<gresource prefix="/io/github/jgreitemann/mv-mqtt-client/state-machine">
 		<file compressed="true" alias="ContinuousExecution.png">img/state_machine/ContinuousExecution.png</file>
