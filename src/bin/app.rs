@@ -4,10 +4,12 @@ mod app_ctrl;
 mod client;
 mod helpers;
 
+use libadwaita as adw;
+
 use std::cell::RefCell;
 use std::sync::Arc;
 
-use gio::prelude::*;
+use adw::prelude::*;
 
 use crate::app::client::Subscription;
 use app_ctrl::ApplicationController;
