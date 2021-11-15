@@ -141,7 +141,7 @@
 													<object class="GtkMenuButton">
 														<property name="hexpand">1</property>
 														<property name="tooltip-text" translatable="yes">Choose a recipe to prepare</property>
-														<property name="popover">recipes-popover</property>
+														<property name="menu-model">recipes-popover</property>
 														<style>
 															<class name="suggested-action"/>
 														</style>
@@ -274,10 +274,7 @@
 						</child>
 						<child>
 							<object class="GtkMenuButton">
-								<property name="popover">actions-popover</property>
-								<child>
-									<placeholder/>
-								</child>
+								<property name="menu-model">actions-menu</property>
 							</object>
 						</child>
 					</object>
@@ -340,163 +337,49 @@
 			</object>
 		</child>
 	</object>
-	<object class="GtkPopoverMenu" id="actions-popover">
-		<property name="child">
-			<object class="GtkBox">
-				<property name="orientation">vertical</property>
-				<property name="margin-start">10</property>
-				<property name="margin-end">10</property>
-				<property name="margin-top">10</property>
-				<property name="margin-bottom">10</property>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="selectmodeautomatic-menu-icon">
-								<property name="icon-name">select-mode-automatic-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Select Automatic Mode</property>
-								<property name="action-name">app.select_automatic_mode</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="reset-menu-icon">
-								<property name="icon-name">system-log-out-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Reset to Preoperational</property>
-								<property name="action-name">app.reset</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="halt-menu-icon">
-								<property name="icon-name">halt-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Halt</property>
-								<property name="action-name">app.halt</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkSeparator"/>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="menu-name">recipes-submenu</property>
-						<property name="text" translatable="yes">Prepare Recipe…</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkModelButton">
-						<property name="visible">True</property>
-						<property name="text" translatable="yes">Unprepare Recipe</property>
-						<property name="action-name">app.unprepare_recipe</property>
-					</object>
-				</child>
-				<child>
-					<object class="GtkSeparator"/>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="startsinglejob-menu-icon">
-								<property name="icon-name">start-single-job-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Start Single Job</property>
-								<property name="action-name">app.start_single_job</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="startcontinuous-menu-icon">
-								<property name="icon-name">start-continuous-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Start Continuous</property>
-								<property name="action-name">app.start_continuous</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="stop-menu-icon">
-								<property name="icon-name">media-playback-stop-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Stop Current Execution</property>
-								<property name="action-name">app.stop</property>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<property name="vexpand">1</property>
-						<child>
-							<object class="GtkImage" id="abort-menu-icon">
-								<property name="icon-name">process-stop-symbolic</property>
-							</object>
-						</child>
-						<child>
-							<object class="GtkModelButton">
-								<property name="hexpand">1</property>
-								<property name="visible">True</property>
-								<property name="text" translatable="yes">Abort Current Execution</property>
-								<property name="action-name">app.abort</property>
-							</object>
-						</child>
-					</object>
-				</child>
-			</object>
-		</property>
-	</object>
-	<object class="GtkPopoverMenu" id="recipes-popover"/>
-	<object class="GtkPopoverMenu" id="recipes-submenu"/>
+	<menu id="actions-menu">
+		<section>
+			<item>
+				<attribute name="label">Select Automatic Mode</attribute>
+				<attribute name="action">app.select_automatic_mode</attribute>
+			</item>
+			<item>
+				<attribute name="label">Reset to Preoperational</attribute>
+				<attribute name="action">app.reset</attribute>
+			</item>
+			<item>
+				<attribute name="label">Halt</attribute>
+				<attribute name="action">app.halt</attribute>
+			</item>
+		</section>
+		<section>
+			<submenu id="recipes-submenu">
+				<attribute name="label">Prepare Recipe…</attribute>
+			</submenu>
+			<item>
+				<attribute name="label">Unprepare Recipe</attribute>
+				<attribute name="action">app.unprepare_recipe</attribute>
+			</item>
+		</section>
+		<section>
+			<item>
+				<attribute name="label">Start Single Job</attribute>
+				<attribute name="action">app.start_single_job</attribute>
+			</item>
+			<item>
+				<attribute name="label">Start Continuous</attribute>
+				<attribute name="action">app.start_continuous</attribute>
+			</item>
+			<item>
+				<attribute name="label">Stop Current Execution</attribute>
+				<attribute name="action">app.stop</attribute>
+			</item>
+			<item>
+				<attribute name="label">Abort Current Execution</attribute>
+				<attribute name="action">app.abort</attribute>
+			</item>
+		</section>
+	</menu>
+	<menu id="recipes-popover">
+	</menu>
 </interface>

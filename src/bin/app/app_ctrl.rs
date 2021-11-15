@@ -17,13 +17,12 @@ use super::helpers::*;
 pub struct ApplicationController {
     status: Option<SystemStatus>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
-    recipes_menu: gio::Menu,
-    recipes_menu_section: gio::Menu,
     result_stores: HashMap<String, gtk4::ListStore>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     actions_stack: Option<gtk4::Stack>,
     state_machine_image: Option<gtk4::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk4::Image>>,
+    recipes_menu: Option<gio::Menu>,
     recipes_stack: Option<gtk4::Stack>,
     results_stack: Option<gtk4::Stack>,
     weak_client: Weak<RefCell<Client>>,
@@ -48,10 +47,6 @@ impl ApplicationController {
             map.add_action(g_action);
         }
 
-        let recipes_menu_section = gio::Menu::new();
-        let recipes_menu = gio::Menu::new();
-        recipes_menu.append_section(Some("Prepare Recipe"), &recipes_menu_section);
-
         let mut state_machine_pixbufs = enum_map! { _ => None };
         for (state, pixbuf_opt) in &mut state_machine_pixbufs {
             *pixbuf_opt = Pixbuf::from_resource(
@@ -63,11 +58,10 @@ impl ApplicationController {
         ApplicationController {
             status: None,
             g_actions,
-            recipes_menu,
-            recipes_menu_section,
             result_stores: HashMap::new(),
             state_machine_pixbufs,
             actions_stack: None,
+            recipes_menu: None,
             state_machine_image: None,
             menu_icons: enum_map! {_ => None},
             recipes_stack: None,
@@ -149,11 +143,10 @@ impl ApplicationController {
             *icon_opt = builder.object(&*format!("{:?}-menu-icon", atype).to_lowercase());
         }
 
-        let recipes_popover: gtk4::PopoverMenu = builder.object("recipes-popover").unwrap();
-        recipes_popover.set_menu_model(Some(&self.recipes_menu));
+        self.recipes_menu = builder.object("recipes-submenu");
 
-        let recipes_submenu: gtk4::PopoverMenu = builder.object("recipes-submenu").unwrap();
-        recipes_submenu.set_menu_model(Some(&self.recipes_menu));
+        let recipes_popover: gio::Menu = builder.object("recipes-popover").unwrap();
+        recipes_popover.append_section(Some("Prepare Recipe"), self.recipes_menu.as_ref().unwrap());
 
         self.recipes_stack = builder.object("recipes-stack");
         self.results_stack = builder.object("results-stack");
@@ -197,7 +190,7 @@ impl ApplicationController {
     }
 
     pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
-        self.recipes_menu_section.remove_all();
+        self.update_recipes_menu(&recipe_list);
 
         let recipes_stack = self.recipes_stack.as_ref().unwrap();
         while let Some(child) = &recipes_stack.first_child() {
@@ -213,12 +206,6 @@ impl ApplicationController {
 
         for recipe in recipe_list {
             let short_desc = ellipt(&recipe.description, 25);
-
-            // Recipe menus
-            self.recipes_menu_section.append(
-                Some(&*format!("{}: {}", recipe.id, &short_desc)),
-                Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
-            );
 
             // Recipes tab stack panes
             let recipe_builder =
@@ -293,6 +280,21 @@ impl ApplicationController {
             clear_button.connect_clicked(clone!(result_store => move |_| result_store.clear()));
 
             self.result_stores.insert(recipe.id.clone(), result_store);
+        }
+    }
+
+    fn update_recipes_menu(&mut self, recipe_list: &[Recipe]) {
+        if let Some(menu) = &self.recipes_menu {
+            menu.remove_all();
+
+            for recipe in recipe_list {
+                let short_desc = ellipt(&recipe.description, 25);
+
+                menu.append(
+                    Some(&*format!("{}: {}", recipe.id, &short_desc)),
+                    Some(&*format!("app.prepare_recipe('{}')", recipe.id)),
+                );
+            }
         }
     }
 
