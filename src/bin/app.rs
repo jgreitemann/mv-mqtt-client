@@ -4,10 +4,12 @@ mod app_ctrl;
 mod client;
 mod helpers;
 
+use libadwaita as adw;
+
 use std::cell::RefCell;
 use std::sync::Arc;
 
-use gio::prelude::*;
+use adw::prelude::*;
 
 use crate::app::client::Subscription;
 use app_ctrl::ApplicationController;
@@ -16,14 +18,14 @@ use mvjson::*;
 
 #[allow(dead_code)]
 pub struct App {
-    application: gtk::Application,
+    application: adw::Application,
     client: Arc<RefCell<Client>>,
     app_ctrl: Arc<RefCell<ApplicationController>>,
 }
 
 impl App {
     pub fn new() -> Self {
-        let application = gtk::Application::new(
+        let application = adw::Application::new(
             Some("io.github.jgreitemann.mv-mqtt-client"),
             Default::default(),
         );

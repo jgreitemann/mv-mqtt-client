@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+	<requires lib="gtk" version="4.0"/>
+	<requires lib="libadwaita" version="1.0"/>
+	<object class="GtkScrolledWindow" id="recipes-scrolled-window">
+		<property name="child">
+			<object class="GtkViewport">
+				<property name="child">
+					<object class="AdwClamp" id="mainBox">
+						<property name="maximum-size">460</property>
+						<property name="child">
+							<object class="GtkBox">
+								<property name="orientation">vertical</property>
+								<property name="spacing">24</property>
+								<property name="margin-top">36</property>
+								<property name="margin-bottom">36</property>
+								<property name="margin-start">12</property>
+								<property name="margin-end">12</property>
+								<child>
+									<object class="AdwPreferencesGroup" id="recipe-desc-group">
+										<property name="title" translatable="yes">Recipe Description</property>
+									</object>
+								</child>
+								<child>
+									<object class="AdwPreferencesGroup" id="input-param-list">
+										<property name="title" translatable="yes">Input parameters</property>
+									</object>
+								</child>
+								<child>
+									<object class="AdwPreferencesGroup" id="output-param-list">
+										<property name="title" translatable="yes">Output parameters (Results)</property>
+									</object>
+								</child>
+							</object>
+						</property>
+					</object>
+				</property>
+			</object>
+		</property>
+	</object>
+</interface>
