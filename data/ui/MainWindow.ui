@@ -298,6 +298,13 @@
 								</child>
 							</object>
 						</child>
+						<child type="end">
+							<object class="GtkButton">
+								<property name="icon-name">preferences-system-network-proxy-symbolic</property>
+								<property name="tooltip-text" translatable="yes">Connect to a different MQTT broker</property>
+								<property name="action-name">app.connect-broker</property>
+							</object>
+						</child>
 					</object>
 				</child>
 				<child>
