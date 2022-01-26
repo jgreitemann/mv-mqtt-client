@@ -253,7 +253,7 @@ impl ApplicationController {
             for (i, (title, _)) in col_entries.clone().enumerate() {
                 let col = gtk4::TreeViewColumn::new();
                 let cell = gtk4::CellRendererText::new();
-                CellRendererTextExt::set_alignment(&cell, pango::Alignment::Right);
+                CellRendererTextExt::set_alignment(&cell, gtk4::pango::Alignment::Right);
                 col.set_title(title);
                 col.pack_start(&cell, true);
                 col.add_attribute(&cell, "text", i as i32);
@@ -267,7 +267,7 @@ impl ApplicationController {
                 result_builder.object("autoscroll-toggle").unwrap();
             let autoscroll_capture = clone!(results_scrolled_window, autoscroll_toggle => move || {
                 if autoscroll_toggle.is_active() {
-                     let adj = results_scrolled_window.vadjustment().unwrap();
+                     let adj = results_scrolled_window.vadjustment();
                      adj.set_value(adj.upper() - adj.page_size());
                 }
             });
