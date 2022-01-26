@@ -5,7 +5,7 @@ use std::sync::{Arc, Weak};
 use adw::prelude::*;
 use gdk_pixbuf::Pixbuf;
 use gio::prelude::*;
-use glib::{ToValue, VariantType};
+use glib::{clone, ToValue, VariantType};
 use gtk4::prelude::*;
 use libadwaita as adw;
 
@@ -83,37 +83,36 @@ impl ApplicationController {
         let rlist_rx_cell = Cell::new(Some(rlist_rx));
         let result_rx_cell = Cell::new(Some(result_rx));
 
-        app.connect_activate(weak!(ctrl => move |app| {
-            let ctrl_strong = ctrl.upgrade().unwrap();
-            ctrl_strong.borrow_mut().build_ui(app);
+        app.connect_activate(clone!(@weak ctrl => move |app| {
+            ctrl.borrow_mut().build_ui(app);
 
             status_rx_cell.take().unwrap().attach(
                 None,
-                clone!(ctrl => move |status| {
-                    ctrl.upgrade().unwrap().borrow_mut().update_status(status);
+                clone!(@strong ctrl => move |status| {
+                    ctrl.borrow_mut().update_status(status);
                     glib::Continue(true)
                 }),
             );
 
             rlist_rx_cell.take().unwrap().attach(
                 None,
-                clone!(ctrl => move |recipe_list| {
-                    ctrl.upgrade().unwrap().borrow_mut().update_recipe_list(recipe_list);
+                clone!(@strong ctrl => move |recipe_list| {
+                    ctrl.borrow_mut().update_recipe_list(recipe_list);
                     glib::Continue(true)
                 }),
             );
 
             result_rx_cell.take().unwrap().attach(
                 None,
-                clone!(ctrl => move |result| {
-                    ctrl.upgrade().unwrap().borrow_mut().new_result(result);
+                clone!(@strong ctrl => move |result| {
+                    ctrl.borrow_mut().new_result(result);
                     glib::Continue(true)
                 }),
             );
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
-            g_action.connect_activate(weak!(ctrl => move |_, parameter| {
+            g_action.connect_activate(clone!(@weak ctrl => move |_, parameter| {
                 let action = match atype {
                     ActionType::SelectModeAutomatic => Action::SelectMode {
                         mode: ModeType::Automatic
@@ -129,7 +128,7 @@ impl ApplicationController {
                     ActionType::Stop => Action::Stop,
                     ActionType::Abort => Action::Abort,
                 };
-                ctrl.upgrade().unwrap().borrow().react(action)
+                ctrl.borrow().react(action);
             }));
         }
     }
@@ -265,14 +264,16 @@ impl ApplicationController {
                 result_builder.object("results-scrolled-window").unwrap();
             let autoscroll_toggle: gtk4::ToggleButton =
                 result_builder.object("autoscroll-toggle").unwrap();
-            let autoscroll_capture = clone!(results_scrolled_window, autoscroll_toggle => move || {
+            let autoscroll_capture = clone!(@strong results_scrolled_window,
+                                            @strong autoscroll_toggle => move || {
                 if autoscroll_toggle.is_active() {
                      let adj = results_scrolled_window.vadjustment();
                      adj.set_value(adj.upper() - adj.page_size());
                 }
             });
-            autoscroll_toggle
-                .connect_toggled(clone!(autoscroll_capture => move |_| autoscroll_capture()));
+            autoscroll_toggle.connect_toggled(
+                clone!(@strong autoscroll_capture => move |_| autoscroll_capture()),
+            );
             results_tree.connect_vadjustment_notify(move |_| autoscroll_capture());
 
             let result_store =
@@ -280,7 +281,8 @@ impl ApplicationController {
             results_tree.set_model(Some(&result_store));
 
             let clear_button: gtk4::Button = result_builder.object("clear-results-button").unwrap();
-            clear_button.connect_clicked(clone!(result_store => move |_| result_store.clear()));
+            clear_button
+                .connect_clicked(clone!(@strong result_store => move |_| result_store.clear()));
 
             self.result_stores.insert(recipe.id.clone(), result_store);
         }

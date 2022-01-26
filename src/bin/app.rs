@@ -1,5 +1,4 @@
 #[macro_use]
-mod macros;
 mod app_ctrl;
 mod client;
 mod helpers;
