@@ -152,7 +152,10 @@ impl ApplicationController {
         self.recipes_stack = builder.object("recipes-stack");
         self.results_stack = builder.object("results-stack");
 
-        window.show();
+        // This is a hack: calling unfullscreen causes window to honor default size.
+        window.unfullscreen();
+
+        window.present();
     }
 
     fn react(&self, action: Action) {
