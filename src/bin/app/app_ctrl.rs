@@ -1,6 +1,6 @@
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
-use std::sync::{Arc, Weak};
+use std::sync::Arc;
 
 use adw::prelude::*;
 use gdk_pixbuf::Pixbuf;
@@ -13,8 +13,13 @@ use enum_map::{enum_map, EnumMap};
 use itertools::izip;
 use mvjson::*;
 
-use super::client::Client;
 use super::helpers::*;
+
+pub enum Message {
+    SystemStatusUpdate(SystemStatus),
+    RecipeListUpdate(Vec<Recipe>),
+    NewResult(VisionResult),
+}
 
 pub struct ApplicationController {
     status: Option<SystemStatus>,
@@ -27,11 +32,10 @@ pub struct ApplicationController {
     recipes_menu: Option<gio::Menu>,
     recipes_stack: Option<gtk4::Stack>,
     results_stack: Option<gtk4::Stack>,
-    weak_client: Weak<RefCell<Client>>,
 }
 
 impl ApplicationController {
-    pub fn new<T: gio::traits::ActionMapExt>(map: &T, weak_client: Weak<RefCell<Client>>) -> Self {
+    pub fn new<T: gio::traits::ActionMapExt>(map: &T) -> Self {
         let g_actions = enum_map! {
             ActionType::SelectModeAutomatic => gio::SimpleAction::new("select_automatic_mode", None),
             ActionType::PrepareRecipe => gio::SimpleAction::new("prepare_recipe",
@@ -68,52 +72,39 @@ impl ApplicationController {
             menu_icons: enum_map! {_ => None},
             recipes_stack: None,
             results_stack: None,
-            weak_client,
         }
     }
 
     pub fn connect_callbacks(
         app: &adw::Application,
         ctrl: &Arc<RefCell<ApplicationController>>,
-        status_rx: glib::Receiver<SystemStatus>,
-        rlist_rx: glib::Receiver<Vec<Recipe>>,
-        result_rx: glib::Receiver<VisionResult>,
+        message_receiver: glib::Receiver<Message>,
+        action_sender: glib::Sender<Action>,
     ) {
-        let status_rx_cell = Cell::new(Some(status_rx));
-        let rlist_rx_cell = Cell::new(Some(rlist_rx));
-        let result_rx_cell = Cell::new(Some(result_rx));
+        let rx_cell = Cell::new(Some(message_receiver));
 
         app.connect_activate(clone!(@weak ctrl => move |app| {
             ctrl.borrow_mut().build_ui(app);
 
-            status_rx_cell.take().unwrap().attach(
+            rx_cell.take().unwrap().attach(
                 None,
-                clone!(@strong ctrl => move |status| {
-                    ctrl.borrow_mut().update_status(status);
-                    glib::Continue(true)
-                }),
-            );
-
-            rlist_rx_cell.take().unwrap().attach(
-                None,
-                clone!(@strong ctrl => move |recipe_list| {
-                    ctrl.borrow_mut().update_recipe_list(recipe_list);
-                    glib::Continue(true)
-                }),
-            );
-
-            result_rx_cell.take().unwrap().attach(
-                None,
-                clone!(@strong ctrl => move |result| {
-                    ctrl.borrow_mut().new_result(result);
+                clone!(@strong ctrl => move |msg| {
+                    let mut ctrl = ctrl.borrow_mut();
+                    use Message::*;
+                    match msg {
+                        SystemStatusUpdate(status) => ctrl.update_status(status),
+                        RecipeListUpdate(recipe_list) => ctrl.update_recipe_list(recipe_list),
+                        NewResult(result) => ctrl.new_result(result),
+                    }
                     glib::Continue(true)
                 }),
             );
         }));
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
+            let g_action_sender = action_sender.clone();
             g_action.connect_activate(clone!(@weak ctrl => move |_, parameter| {
-                let action = match atype {
+                g_action_sender.send(match atype {
                     ActionType::SelectModeAutomatic => Action::SelectMode {
                         mode: ModeType::Automatic
                     },
@@ -127,8 +118,7 @@ impl ApplicationController {
                     ActionType::Halt => Action::Halt,
                     ActionType::Stop => Action::Stop,
                     ActionType::Abort => Action::Abort,
-                };
-                ctrl.borrow().react(action);
+                }).unwrap();
             }));
         }
     }
@@ -156,18 +146,6 @@ impl ApplicationController {
         window.unfullscreen();
 
         window.present();
-    }
-
-    fn react(&self, action: Action) {
-        self.weak_client
-            .upgrade()
-            .ok_or("Could not acquire MQTT client instance")
-            .map(|strong_client| {
-                strong_client
-                    .borrow()
-                    .publish("merlic/action/json", &action)
-            })
-            .unwrap();
     }
 
     pub fn update_status(&mut self, status: SystemStatus) {
