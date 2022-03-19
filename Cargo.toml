@@ -6,6 +6,7 @@ edition = "2021"
 autobins = false
 
 [dependencies]
+clap = { version = "3.1.6", features = ["derive"] }
 gdk-pixbuf = "0.15.6"
 gio = "0.15.7"
 glib = "0.15.9"

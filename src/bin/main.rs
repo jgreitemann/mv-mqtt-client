@@ -1,6 +1,7 @@
-use app::App;
-
 mod app;
+mod cli;
+
+use app::App;
 
 fn main() {
     let res =
