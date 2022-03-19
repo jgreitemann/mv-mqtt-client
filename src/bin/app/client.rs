@@ -1,6 +1,7 @@
 use paho_mqtt as mqtt;
 
 use crate::app::helpers::regex_from_mqtt_wildcard;
+use crate::cli::CLIError;
 use itertools::{zip, Itertools};
 use mqtt::{AsyncClient, DeliveryToken, Message};
 use paho_mqtt::QOS_1;
@@ -56,10 +57,14 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(host: &str) -> Client {
+    pub fn new(host: &str) -> Result<Client, CLIError> {
         let instance = AsyncClient::new(host).unwrap();
-        instance.connect(None).wait().unwrap();
-        Client { instance }
+        instance.connect(None).wait().or_else(|_| {
+            Err(CLIError::CannotConnectToBroker {
+                url: host.to_string(),
+            })
+        })?;
+        Ok(Client { instance })
     }
 
     pub fn publish<S, Obj>(&self, topic: S, obj: &Obj) -> DeliveryToken
@@ -71,7 +76,10 @@ impl Client {
         self.instance.publish(msg)
     }
 
-    pub fn update_subscriptions(&mut self, subs: Vec<Box<dyn MessageHandler>>) {
+    pub fn update_subscriptions(
+        &mut self,
+        subs: Vec<Box<dyn MessageHandler>>,
+    ) -> Result<(), CLIError> {
         let all_topics: Vec<String> = subs
             .iter()
             .map(|s| s.get_handled_topic())
@@ -84,7 +92,10 @@ impl Client {
             .collect();
         let all_qos = [QOS_1].repeat(all_topics.len());
 
-        self.instance.unsubscribe("#").wait().unwrap();
+        self.instance
+            .unsubscribe("#")
+            .wait()
+            .or(Err(CLIError::SubscriptionCouldNotBeUpdated))?;
         self.instance.set_message_callback(move |_, msg_opt| {
             if let Some(msg) = msg_opt {
                 if let Some((sub, _)) = zip(&subs, &regexes).find(|(_, r)| r.is_match(msg.topic()))
@@ -93,7 +104,11 @@ impl Client {
                 }
             }
         });
-        self.instance.subscribe_many(&all_topics, &all_qos);
+        self.instance
+            .subscribe_many(&all_topics, &all_qos)
+            .wait()
+            .map(|_| ())
+            .or(Err(CLIError::SubscriptionCouldNotBeUpdated))
     }
 }
 

@@ -16,3 +16,9 @@ pub struct Args {
     #[clap(short = 't', long, default_value = "merlic")]
     pub prefix: String,
 }
+
+#[derive(Debug)]
+pub enum CLIError {
+    CannotConnectToBroker { url: String },
+    SubscriptionCouldNotBeUpdated,
+}

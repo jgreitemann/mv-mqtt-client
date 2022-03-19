@@ -12,7 +12,7 @@ use adw::prelude::*;
 use glib::clone;
 
 use crate::app::client::Subscription;
-use crate::cli::Args;
+use crate::cli::*;
 use app_ctrl::{ApplicationController, Message};
 use clap::Parser;
 use client::Client;
@@ -26,7 +26,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new() -> Result<Self, CLIError> {
         let args = Args::parse();
 
         let application = adw::Application::new(
@@ -37,7 +37,7 @@ impl App {
         let client = Arc::new(RefCell::new(Client::new(&format!(
             "tcp://{}:{}",
             args.host, args.port
-        ))));
+        ))?));
 
         let app_ctrl = Arc::new(RefCell::new(ApplicationController::new(&application)));
 
@@ -78,13 +78,13 @@ impl App {
                     move |result| message_sender.send(NewResult(result)).unwrap()
                 },
             ),
-        ]);
+        ])?;
 
-        App {
+        Ok(App {
             application,
             client,
             app_ctrl,
-        }
+        })
     }
 
     pub fn run(self: &App) {
