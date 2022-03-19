@@ -6,19 +6,19 @@ edition = "2021"
 autobins = false
 
 [dependencies]
-gdk-pixbuf = "0.15.1"
-gio = "0.15.3"
-glib = "0.15.3"
+gdk-pixbuf = "0.15.6"
+gio = "0.15.7"
+glib = "0.15.9"
 libadwaita = "0.1.0"
-gtk4 = "0.4.5"
-enum-map = "0.6.4"
-itertools = "0.10.1"
-futures = "0.3.17"
-paho-mqtt = "0.9.1"
-pango = "0.15.2"
-regex = "1.5.4"
-serde = { version = "1.0.130", features = ["derive"] }
-serde_json = "1.0.68"
+gtk4 = "0.4.6"
+enum-map = "2.0.3"
+itertools = "0.10.3"
+futures = "0.3.21"
+paho-mqtt = "0.10.0"
+pango = "0.15.7"
+regex = "1.5.5"
+serde = { version = "1.0.136", features = ["derive"] }
+serde_json = "1.0.79"
 
 [lib]
 name = "mvjson"
