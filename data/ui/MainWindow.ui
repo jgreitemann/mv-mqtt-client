@@ -284,7 +284,15 @@
                       <object class="GtkStackPage">
                         <property name="name">alert</property>
                         <property name="child">
-                          <object class="GtkBox">
+                          <object class="GtkButton">
+                            <property name="hexpand">1</property>
+                            <property name="tooltip-text" translatable="yes">Clear alerts</property>
+                            <property name="action-name">app.clear_alerts</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="icon-name">user-trash-symbolic</property>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>

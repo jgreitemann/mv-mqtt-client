@@ -26,6 +26,7 @@ pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
     alert_store: Option<gtk4::ListStore>,
+    clear_alerts_action: gio::SimpleAction,
     alert_stack_page: Option<adw::ViewStackPage>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     toast_overlay: Option<adw::ToastOverlay>,
@@ -64,10 +65,14 @@ impl ApplicationController {
             .ok();
         }
 
+        let clear_alerts_action = gio::SimpleAction::new("clear_alerts", None);
+        map.add_action(&clear_alerts_action);
+
         ApplicationController {
             g_actions,
             result_stores: HashMap::new(),
             alert_store: None,
+            clear_alerts_action,
             alert_stack_page: None,
             state_machine_pixbufs,
             toast_overlay: None,
@@ -109,24 +114,37 @@ impl ApplicationController {
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
             let g_action_sender = action_sender.clone();
-            g_action.connect_activate(clone!(@weak ctrl => move |_, parameter| {
-                g_action_sender.send(match atype {
-                    ActionType::SelectModeAutomatic => Action::SelectMode {
-                        mode: ModeType::Automatic
-                    },
-                    ActionType::PrepareRecipe => Action::PrepareRecipe {
-                        recipe_id: parameter.unwrap().str().unwrap().to_string()
-                    },
-                    ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
-                    ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
-                    ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
-                    ActionType::Reset => Action::Reset,
-                    ActionType::Halt => Action::Halt,
-                    ActionType::Stop => Action::Stop,
-                    ActionType::Abort => Action::Abort,
-                }).unwrap();
-            }));
+            g_action.connect_activate(move |_, parameter| {
+                g_action_sender
+                    .send(match atype {
+                        ActionType::SelectModeAutomatic => Action::SelectMode {
+                            mode: ModeType::Automatic,
+                        },
+                        ActionType::PrepareRecipe => Action::PrepareRecipe {
+                            recipe_id: parameter.unwrap().str().unwrap().to_string(),
+                        },
+                        ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
+                        ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
+                        ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
+                        ActionType::Reset => Action::Reset,
+                        ActionType::Halt => Action::Halt,
+                        ActionType::Stop => Action::Stop,
+                        ActionType::Abort => Action::Abort,
+                    })
+                    .unwrap();
+            });
         }
+
+        ctrl.borrow()
+            .clear_alerts_action
+            .connect_activate(clone!(@weak ctrl => move |_, _| {
+                let ctrl = ctrl.borrow();
+                ctrl.alert_store.as_ref().map(|store| store.clear());
+                ctrl.alert_stack_page.as_ref().map(|page| {
+                    page.set_badge_number(0);
+                    page.set_needs_attention(false);
+                });
+            }));
     }
 
     fn build_ui(&mut self, app: &adw::Application) {
@@ -369,7 +387,12 @@ impl ApplicationController {
             )
         });
 
-        self.increment_unread_alert_count();
+        match err.severity {
+            Severity::Warning | Severity::Error | Severity::Critical => {
+                self.increment_unread_alert_count()
+            }
+            _ => {}
+        };
     }
 
     fn increment_unread_alert_count(&self) {
