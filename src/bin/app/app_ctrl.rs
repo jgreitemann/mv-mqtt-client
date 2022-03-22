@@ -26,6 +26,7 @@ pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
     alert_store: Option<gtk4::ListStore>,
+    alert_stack_page: Option<adw::ViewStackPage>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     toast_overlay: Option<adw::ToastOverlay>,
     actions_stack: Option<gtk4::Stack>,
@@ -67,6 +68,7 @@ impl ApplicationController {
             g_actions,
             result_stores: HashMap::new(),
             alert_store: None,
+            alert_stack_page: None,
             state_machine_pixbufs,
             toast_overlay: None,
             actions_stack: None,
@@ -156,6 +158,21 @@ impl ApplicationController {
         ]));
         let alerts_tree: gtk4::TreeView = builder.object("alerts-tree").unwrap();
         alerts_tree.set_model(self.alert_store.as_ref());
+
+        self.alert_stack_page = builder.object("alert-stack-page");
+        let alert_page = self.alert_stack_page.as_ref().unwrap().clone();
+        let content_stack: adw::ViewStack = builder.object("content-stack").unwrap();
+        content_stack.connect_visible_child_name_notify(move |stack| {
+            if stack
+                .visible_child_name()
+                .as_ref()
+                .map(glib::GString::as_str)
+                == Some("alert")
+            {
+                alert_page.set_badge_number(0);
+                alert_page.set_needs_attention(false);
+            }
+        });
 
         // This is a hack: calling unfullscreen causes window to honor default size.
         window.unfullscreen();
@@ -350,6 +367,16 @@ impl ApplicationController {
                     (4, &err.message),
                 ],
             )
+        });
+
+        self.increment_unread_alert_count();
+    }
+
+    fn increment_unread_alert_count(&self) {
+        self.alert_stack_page.as_ref().map(|page| {
+            let new_count = page.badge_number() + 1;
+            page.set_badge_number(new_count);
+            page.set_needs_attention(true);
         });
     }
 }

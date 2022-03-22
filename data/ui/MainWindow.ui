@@ -376,7 +376,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="AdwViewStackPage">
+                  <object class="AdwViewStackPage" id="alert-stack-page">
                     <property name="name">alert</property>
                     <property name="icon-name">preferences-system-notifications-symbolic</property>
                     <property name="title" translatable="yes">Alerts</property>
