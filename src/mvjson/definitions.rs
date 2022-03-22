@@ -14,7 +14,7 @@ pub enum State {
     FrontendAccess,
 }
 
-#[derive(Copy, Clone, Debug, Enum)]
+#[derive(Copy, Clone, Debug, Enum, Deserialize)]
 pub enum ActionType {
     SelectModeAutomatic,
     PrepareRecipe,
@@ -155,4 +155,22 @@ impl glib::ToValue for ResultValue {
             ResultValue::String(_) => Type::STRING,
         }
     }
+}
+
+#[derive(Copy, Clone, Debug, Enum, Deserialize)]
+pub enum Severity {
+    Debug,
+    Info,
+    Warning,
+    Error,
+    Critical,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Error {
+    pub code: u32,
+    pub severity: Severity,
+    pub cause: Option<ActionType>,
+    pub brief: String,
+    pub message: String,
 }

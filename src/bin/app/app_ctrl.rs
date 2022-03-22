@@ -19,12 +19,14 @@ pub enum Message {
     StateUpdate(State),
     RecipeListUpdate(Vec<Recipe>),
     NewResult(VisionResult),
+    Error(Error),
 }
 
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
+    toast_overlay: Option<adw::ToastOverlay>,
     actions_stack: Option<gtk4::Stack>,
     state_machine_image: Option<gtk4::Image>,
     menu_icons: EnumMap<ActionType, Option<gtk4::Image>>,
@@ -64,6 +66,7 @@ impl ApplicationController {
             g_actions,
             result_stores: HashMap::new(),
             state_machine_pixbufs,
+            toast_overlay: None,
             actions_stack: None,
             recipes_menu: None,
             state_machine_image: None,
@@ -93,6 +96,7 @@ impl ApplicationController {
                         StateUpdate(state) => ctrl.update_state(state),
                         RecipeListUpdate(recipe_list) => ctrl.update_recipe_list(recipe_list),
                         NewResult(result) => ctrl.new_result(result),
+                        Error(err) => ctrl.error(err),
                     }
                     glib::Continue(true)
                 }),
@@ -126,6 +130,7 @@ impl ApplicationController {
         let window: adw::ApplicationWindow = builder.object("window").unwrap();
         window.set_application(Some(app));
 
+        self.toast_overlay = builder.object("toast-overlay");
         self.actions_stack = builder.object("actions-stack");
         self.state_machine_image = builder.object("statemachine-image");
         for (atype, icon_opt) in &mut self.menu_icons {
@@ -299,6 +304,16 @@ impl ApplicationController {
                 .unwrap()
                 .set_visible_child_name(&result.recipe_id);
         }
+    }
+
+    pub fn error(&self, err: Error) {
+        let toast = adw::Toast::builder()
+            .title(&format!("{}", err.brief))
+            .priority(adw::ToastPriority::Normal)
+            .build();
+        self.toast_overlay
+            .as_ref()
+            .map(|overlay| overlay.add_toast(&toast));
     }
 }
 

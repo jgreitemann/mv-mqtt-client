@@ -61,23 +61,30 @@ impl App {
             action_sender,
         );
 
-        use Message::*;
         client.borrow_mut().update_subscriptions(vec![
             Subscription::<State, _>::boxed_new(&format!("{}/state", args.prefix), {
                 let message_sender = message_sender.clone();
-                move |state| message_sender.send(StateUpdate(state)).unwrap()
+                move |state| message_sender.send(Message::StateUpdate(state)).unwrap()
             }),
             Subscription::<Vec<Recipe>, _>::boxed_new(&format!("{}/recipes", args.prefix), {
                 let message_sender = message_sender.clone();
-                move |rlist| message_sender.send(RecipeListUpdate(rlist)).unwrap()
+                move |rlist| {
+                    message_sender
+                        .send(Message::RecipeListUpdate(rlist))
+                        .unwrap()
+                }
             }),
             Subscription::<VisionResult, _>::boxed_new(
                 &format!("{}/recipes/+/result", args.prefix),
                 {
                     let message_sender = message_sender.clone();
-                    move |result| message_sender.send(NewResult(result)).unwrap()
+                    move |result| message_sender.send(Message::NewResult(result)).unwrap()
                 },
             ),
+            Subscription::<Error, _>::boxed_new(&format!("{}/error", args.prefix), {
+                let message_sender = message_sender.clone();
+                move |err| message_sender.send(Message::Error(err)).unwrap()
+            }),
         ])?;
 
         Ok(App {
