@@ -45,7 +45,7 @@ impl App {
         let (action_sender, action_receiver): (glib::Sender<Action>, _) =
             glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
-        let action_topic = format!("{}/action/json", args.prefix);
+        let action_topic = format!("{}/action", args.prefix);
         action_receiver.attach(
             None,
             clone!(@strong client => move |action| {
@@ -63,16 +63,16 @@ impl App {
 
         use Message::*;
         client.borrow_mut().update_subscriptions(vec![
-            Subscription::<SystemStatus, _>::boxed_new(&format!("{}/status/json", args.prefix), {
+            Subscription::<State, _>::boxed_new(&format!("{}/state", args.prefix), {
                 let message_sender = message_sender.clone();
-                move |status| message_sender.send(SystemStatusUpdate(status)).unwrap()
+                move |state| message_sender.send(StateUpdate(state)).unwrap()
             }),
-            Subscription::<Vec<Recipe>, _>::boxed_new(&format!("{}/recipes/json", args.prefix), {
+            Subscription::<Vec<Recipe>, _>::boxed_new(&format!("{}/recipes", args.prefix), {
                 let message_sender = message_sender.clone();
                 move |rlist| message_sender.send(RecipeListUpdate(rlist)).unwrap()
             }),
             Subscription::<VisionResult, _>::boxed_new(
-                &format!("{}/recipes/+/result/json", args.prefix),
+                &format!("{}/recipes/+/result", args.prefix),
                 {
                     let message_sender = message_sender.clone();
                     move |result| message_sender.send(NewResult(result)).unwrap()

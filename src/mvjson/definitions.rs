@@ -96,18 +96,6 @@ pub enum Action {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SystemStatus {
-    pub state: State,
-    #[serde(default)]
-    pub mode: Option<ModeType>,
-    #[serde(default)]
-    pub recipe_id: Option<String>,
-    #[serde(default)]
-    pub job_id: Option<u32>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct RecipeParam {
     pub name: String,
     pub description: String,

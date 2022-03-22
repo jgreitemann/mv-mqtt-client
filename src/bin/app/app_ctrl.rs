@@ -16,13 +16,12 @@ use mvjson::*;
 use super::helpers::*;
 
 pub enum Message {
-    SystemStatusUpdate(SystemStatus),
+    StateUpdate(State),
     RecipeListUpdate(Vec<Recipe>),
     NewResult(VisionResult),
 }
 
 pub struct ApplicationController {
-    status: Option<SystemStatus>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
@@ -62,7 +61,6 @@ impl ApplicationController {
         }
 
         ApplicationController {
-            status: None,
             g_actions,
             result_stores: HashMap::new(),
             state_machine_pixbufs,
@@ -92,7 +90,7 @@ impl ApplicationController {
                     let mut ctrl = ctrl.borrow_mut();
                     use Message::*;
                     match msg {
-                        SystemStatusUpdate(status) => ctrl.update_status(status),
+                        StateUpdate(state) => ctrl.update_state(state),
                         RecipeListUpdate(recipe_list) => ctrl.update_recipe_list(recipe_list),
                         NewResult(result) => ctrl.new_result(result),
                     }
@@ -148,9 +146,9 @@ impl ApplicationController {
         window.present();
     }
 
-    pub fn update_status(&mut self, status: SystemStatus) {
+    pub fn update_state(&mut self, state: State) {
         for (allowed, g_action, icon_opt) in izip!(
-            available_actions(status.state).values(),
+            available_actions(state).values(),
             self.g_actions.values(),
             self.menu_icons.values()
         ) {
@@ -161,14 +159,12 @@ impl ApplicationController {
         }
 
         if let Some(stack) = &self.actions_stack {
-            stack.set_visible_child_name(&*format!("{:?}-pane", status.state).to_lowercase());
+            stack.set_visible_child_name(&*format!("{:?}-pane", state).to_lowercase());
         }
 
         if let Some(image) = &self.state_machine_image {
-            image.set_from_pixbuf(self.state_machine_pixbufs[status.state].as_ref());
+            image.set_from_pixbuf(self.state_machine_pixbufs[state].as_ref());
         }
-
-        self.status = Some(status);
     }
 
     pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
