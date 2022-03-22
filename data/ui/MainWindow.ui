@@ -388,6 +388,57 @@
                         <property name="child">
                           <object class="GtkTreeView" id="alerts-tree">
                             <property name="focusable">1</property>
+                            <property name="tooltip-column">4</property>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="title">Severity</property>
+                                <child>
+                                  <object class="GtkCellRendererPixbuf"/>
+                                  <attributes>
+                                    <attribute name="icon-name">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="title">Code</property>
+                                <child>
+                                  <object class="GtkCellRendererText"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="title">Causal Action</property>
+                                <property name="resizable">1</property>
+                                <child>
+                                  <object class="GtkCellRendererText">
+                                    <property name="ellipsize">end</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="title">Brief Message</property>
+                                <property name="resizable">1</property>
+                                <child>
+                                  <object class="GtkCellRendererText">
+                                    <property name="ellipsize">end</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>

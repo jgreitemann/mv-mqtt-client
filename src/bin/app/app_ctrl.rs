@@ -25,6 +25,7 @@ pub enum Message {
 pub struct ApplicationController {
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
+    alert_store: Option<gtk4::ListStore>,
     state_machine_pixbufs: EnumMap<State, Option<Pixbuf>>,
     toast_overlay: Option<adw::ToastOverlay>,
     actions_stack: Option<gtk4::Stack>,
@@ -65,6 +66,7 @@ impl ApplicationController {
         ApplicationController {
             g_actions,
             result_stores: HashMap::new(),
+            alert_store: None,
             state_machine_pixbufs,
             toast_overlay: None,
             actions_stack: None,
@@ -144,6 +146,16 @@ impl ApplicationController {
 
         self.recipes_stack = builder.object("recipes-stack");
         self.results_stack = builder.object("results-stack");
+
+        self.alert_store = Some(gtk4::ListStore::new(&[
+            glib::Type::STRING,
+            glib::Type::STRING,
+            glib::Type::STRING,
+            glib::Type::STRING,
+            glib::Type::STRING,
+        ]));
+        let alerts_tree: gtk4::TreeView = builder.object("alerts-tree").unwrap();
+        alerts_tree.set_model(self.alert_store.as_ref());
 
         // This is a hack: calling unfullscreen causes window to honor default size.
         window.unfullscreen();
@@ -314,6 +326,31 @@ impl ApplicationController {
         self.toast_overlay
             .as_ref()
             .map(|overlay| overlay.add_toast(&toast));
+
+        self.alert_store.as_ref().map(|store| {
+            let severity_icon = match err.severity {
+                Severity::Warning => "dialog-warning-symbolic",
+                Severity::Error => "edit-delete-symbolic",
+                Severity::Critical => "dialog-error-symbolic",
+                _ => "",
+            };
+
+            let cause_str = err
+                .cause
+                .map(|cause| format!("{:?}", cause))
+                .unwrap_or(String::new());
+
+            store.insert_with_values(
+                None,
+                &[
+                    (0, &severity_icon),
+                    (1, &format!("0x{:04x}", &err.code)),
+                    (2, &cause_str),
+                    (3, &err.brief),
+                    (4, &err.message),
+                ],
+            )
+        });
     }
 }
 
