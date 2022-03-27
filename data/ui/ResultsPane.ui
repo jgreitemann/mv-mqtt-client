@@ -1,95 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-	<requires lib="gtk" version="4.0"/>
-	<object class="GtkBox" id="outer-box">
-		<property name="orientation">vertical</property>
-		<child>
-			<object class="GtkScrolledWindow" id="results-scrolled-window">
-				<property name="vexpand">1</property>
-				<property name="focusable">1</property>
-				<property name="has-frame">1</property>
-				<property name="child">
-					<object class="GtkTreeView" id="results-tree">
-						<property name="focusable">1</property>
-					</object>
-				</property>
-			</object>
-		</child>
-		<child>
-			<object class="GtkBox">
-				<child>
-					<object class="GtkToggleButton" id="autoscroll-toggle">
-						<property name="focusable">1</property>
-						<property name="active">1</property>
-						<property name="receives-default">1</property>
-						<property name="margin-end">4</property>
-						<child>
-							<object class="GtkBox">
-								<property name="spacing">6</property>
-								<child>
-									<object class="GtkImage">
-										<property name="icon-name">autoscroll-symbolic</property>
-									</object>
-								</child>
-								<child>
-									<object class="GtkLabel">
-										<property name="label" translatable="yes">Scroll to Latest</property>
-									</object>
-								</child>
-							</object>
-						</child>
-					</object>
-				</child>
-				<child>
-					<object class="GtkBox">
-						<child>
-							<object class="GtkButton">
-								<property name="focusable">1</property>
-								<property name="receives-default">1</property>
-								<child>
-									<object class="GtkBox">
-										<property name="spacing">6</property>
-										<child>
-											<object class="GtkImage">
-												<property name="icon-name">document-save-as-symbolic</property>
-											</object>
-										</child>
-										<child>
-											<object class="GtkLabel">
-												<property name="label" translatable="yes">Export Data</property>
-											</object>
-										</child>
-									</object>
-								</child>
-							</object>
-						</child>
-						<child>
-							<object class="GtkButton" id="clear-results-button">
-								<property name="focusable">1</property>
-								<property name="receives-default">1</property>
-								<child>
-									<object class="GtkBox">
-										<property name="spacing">6</property>
-										<child>
-											<object class="GtkImage">
-												<property name="icon-name">user-trash-symbolic</property>
-											</object>
-										</child>
-										<child>
-											<object class="GtkLabel">
-												<property name="label" translatable="yes">Clear</property>
-											</object>
-										</child>
-									</object>
-								</child>
-							</object>
-						</child>
-						<style>
-							<class name="linked"/>
-						</style>
-					</object>
-				</child>
-			</object>
-		</child>
-	</object>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkBox" id="outer-box">
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkScrolledWindow" id="results-scrolled-window">
+        <property name="vexpand">1</property>
+        <property name="focusable">1</property>
+        <property name="has-frame">1</property>
+        <property name="child">
+          <object class="GtkTreeView" id="results-tree">
+            <property name="focusable">1</property>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <child>
+          <object class="GtkToggleButton" id="autoscroll-toggle">
+            <property name="focusable">1</property>
+            <property name="active">1</property>
+            <property name="receives-default">1</property>
+            <property name="margin-end">4</property>
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">autoscroll-symbolic</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Scroll to Latest</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkButton">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">document-save-as-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Export Data</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="clear-results-button">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">user-trash-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Clear</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <style>
+              <class name="linked"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>
