@@ -24,18 +24,9 @@
             <property name="receives-default">1</property>
             <property name="margin-end">4</property>
             <child>
-              <object class="GtkBox">
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="icon-name">autoscroll-symbolic</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Scroll to Latest</property>
-                  </object>
-                </child>
+              <object class="AdwButtonContent">
+                <property name="icon-name">autoscroll-symbolic</property>
+                <property name="label" translatable="yes">Scroll to Latest</property>
               </object>
             </child>
           </object>
@@ -47,18 +38,9 @@
                 <property name="focusable">1</property>
                 <property name="receives-default">1</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="icon-name">document-save-as-symbolic</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="label" translatable="yes">Export Data</property>
-                      </object>
-                    </child>
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">document-save-as-symbolic</property>
+                    <property name="label" translatable="yes">Export Data</property>
                   </object>
                 </child>
               </object>
@@ -68,18 +50,9 @@
                 <property name="focusable">1</property>
                 <property name="receives-default">1</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="icon-name">user-trash-symbolic</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="label" translatable="yes">Clear</property>
-                      </object>
-                    </child>
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">user-trash-symbolic</property>
+                    <property name="label" translatable="yes">Clear</property>
                   </object>
                 </child>
               </object>
