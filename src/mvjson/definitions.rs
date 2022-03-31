@@ -83,10 +83,14 @@ pub enum Action {
     StartSingleJob {
         #[serde(rename = "recipeId", skip_serializing_if = "Option::is_none")]
         recipe_id: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        parameters: Option<Vec<String>>,
     },
     StartContinuous {
         #[serde(rename = "recipeId", skip_serializing_if = "Option::is_none")]
         recipe_id: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        parameters: Option<Vec<String>>,
     },
     Reset,
     Halt,

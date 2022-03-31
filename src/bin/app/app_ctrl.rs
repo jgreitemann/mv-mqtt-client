@@ -18,12 +18,14 @@ use super::helpers::*;
 
 pub enum Message {
     StateUpdate(State),
+    PreparedRecipeIdsUpdate(Vec<String>),
     RecipeListUpdate(Vec<Recipe>),
     NewResult(VisionResult),
     Error(Error),
 }
 
 pub struct ApplicationController {
+    prepared_recipe: Option<String>,
     window: Option<adw::ApplicationWindow>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
@@ -72,6 +74,7 @@ impl ApplicationController {
         map.add_action(&clear_alerts_action);
 
         ApplicationController {
+            prepared_recipe: None,
             window: None,
             g_actions,
             result_stores: HashMap::new(),
@@ -108,6 +111,7 @@ impl ApplicationController {
                     use Message::*;
                     match msg {
                         StateUpdate(state) => ctrl.update_state(state),
+                        PreparedRecipeIdsUpdate(ids) => ctrl.update_prepared_recipe_ids(ids),
                         RecipeListUpdate(recipe_list) => ctrl.update_recipe_list(recipe_list),
                         NewResult(result) => ctrl.new_result(result),
                         Error(err) => ctrl.error(err),
@@ -119,7 +123,7 @@ impl ApplicationController {
 
         for (atype, g_action) in &ctrl.borrow().g_actions {
             let g_action_sender = action_sender.clone();
-            g_action.connect_activate(move |_, parameter| {
+            g_action.connect_activate(clone!(@weak ctrl => move |_, parameter| {
                 g_action_sender
                     .send(match atype {
                         ActionType::SelectModeAutomatic => Action::SelectMode {
@@ -129,15 +133,21 @@ impl ApplicationController {
                             recipe_id: parameter.unwrap().str().unwrap().to_string(),
                         },
                         ActionType::UnprepareRecipe => Action::UnprepareRecipe { recipe_id: None },
-                        ActionType::StartSingleJob => Action::StartSingleJob { recipe_id: None },
-                        ActionType::StartContinuous => Action::StartContinuous { recipe_id: None },
+                        ActionType::StartSingleJob => Action::StartSingleJob {
+                            recipe_id: None,
+                            parameters: ctrl.borrow().gather_start_parameters(),
+                        },
+                        ActionType::StartContinuous => Action::StartContinuous {
+                            recipe_id: None,
+                            parameters: ctrl.borrow().gather_start_parameters(),
+                        },
                         ActionType::Reset => Action::Reset,
                         ActionType::Halt => Action::Halt,
                         ActionType::Stop => Action::Stop,
                         ActionType::Abort => Action::Abort,
                     })
                     .unwrap();
-            });
+            }));
         }
 
         ctrl.borrow()
@@ -223,6 +233,10 @@ impl ApplicationController {
         if let Some(image) = &self.state_machine_image {
             image.set_from_pixbuf(self.state_machine_pixbufs[state].as_ref());
         }
+    }
+
+    pub fn update_prepared_recipe_ids(&mut self, ids: Vec<String>) {
+        self.prepared_recipe = ids.first().cloned();
     }
 
     pub fn update_recipe_list(&mut self, recipe_list: Vec<Recipe>) {
@@ -439,6 +453,24 @@ impl ApplicationController {
             page.set_badge_number(new_count);
             page.set_needs_attention(true);
         });
+    }
+
+    fn gather_start_parameters(&self) -> Option<Vec<String>> {
+        self.prepared_recipe
+            .as_ref()
+            .and_then(|id| self.recipe_input_fields.get(id))
+            .and_then(|inputs| {
+                if inputs.iter().all(|field| field.is_editable()) {
+                    Some(
+                        inputs
+                            .iter()
+                            .map(|field| field.text().to_string())
+                            .collect(),
+                    )
+                } else {
+                    None
+                }
+            })
     }
 }
 

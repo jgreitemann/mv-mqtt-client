@@ -66,6 +66,17 @@ impl App {
                 let message_sender = message_sender.clone();
                 move |state| message_sender.send(Message::StateUpdate(state)).unwrap()
             }),
+            Subscription::<Vec<String>, _>::boxed_new(
+                &format!("{}/preparedRecipeIds", args.prefix),
+                {
+                    let message_sender = message_sender.clone();
+                    move |ids| {
+                        message_sender
+                            .send(Message::PreparedRecipeIdsUpdate(ids))
+                            .unwrap()
+                    }
+                },
+            ),
             Subscription::<Vec<Recipe>, _>::boxed_new(&format!("{}/recipes", args.prefix), {
                 let message_sender = message_sender.clone();
                 move |rlist| {
