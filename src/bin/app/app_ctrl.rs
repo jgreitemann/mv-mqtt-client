@@ -10,6 +10,7 @@ use gtk4::prelude::*;
 use libadwaita as adw;
 
 use enum_map::{enum_map, EnumMap};
+use gtk4::Align;
 use itertools::izip;
 use mvjson::*;
 
@@ -23,6 +24,7 @@ pub enum Message {
 }
 
 pub struct ApplicationController {
+    window: Option<adw::ApplicationWindow>,
     g_actions: EnumMap<ActionType, gio::SimpleAction>,
     result_stores: HashMap<String, gtk4::ListStore>,
     alert_store: Option<gtk4::ListStore>,
@@ -36,6 +38,7 @@ pub struct ApplicationController {
     recipes_menu: Option<gio::Menu>,
     recipes_stack: Option<gtk4::Stack>,
     results_stack: Option<gtk4::Stack>,
+    recipe_input_fields: HashMap<String, Vec<gtk4::Entry>>,
 }
 
 impl ApplicationController {
@@ -69,6 +72,7 @@ impl ApplicationController {
         map.add_action(&clear_alerts_action);
 
         ApplicationController {
+            window: None,
             g_actions,
             result_stores: HashMap::new(),
             alert_store: None,
@@ -82,6 +86,7 @@ impl ApplicationController {
             menu_icons: enum_map! {_ => None},
             recipes_stack: None,
             results_stack: None,
+            recipe_input_fields: HashMap::new(),
         }
     }
 
@@ -149,8 +154,8 @@ impl ApplicationController {
 
     fn build_ui(&mut self, app: &adw::Application) {
         let builder = gtk4::Builder::from_resource(resource_path("MainWindow.ui").as_str());
-        let window: adw::ApplicationWindow = builder.object("window").unwrap();
-        window.set_application(Some(app));
+        self.window = builder.object("window");
+        self.window.as_ref().unwrap().set_application(Some(app));
 
         self.toast_overlay = builder.object("toast-overlay");
         self.actions_stack = builder.object("actions-stack");
@@ -193,9 +198,10 @@ impl ApplicationController {
         });
 
         // This is a hack: calling unfullscreen causes window to honor default size.
-        window.unfullscreen();
-
-        window.present();
+        self.window.as_ref().map(|win| {
+            win.unfullscreen();
+            win.present();
+        });
     }
 
     pub fn update_state(&mut self, state: State) {
@@ -254,8 +260,40 @@ impl ApplicationController {
             let output_param_list: adw::PreferencesGroup =
                 recipe_builder.object("output-param-list").unwrap();
             recipe_desc_group.add(&adw::ActionRow::builder().title(&recipe.description).build());
-            fill_param_rows(&input_param_list, recipe.inputs.iter());
-            fill_param_rows(&output_param_list, recipe.outputs.iter());
+            fill_param_rows(
+                &input_param_list,
+                recipe.inputs.iter(),
+                Some(
+                    &mut self
+                        .recipe_input_fields
+                        .entry(recipe.id.clone())
+                        .or_insert(Vec::new()),
+                ),
+            );
+            fill_param_rows(&output_param_list, recipe.outputs.iter(), None);
+
+            let input_param_switch: gtk4::Switch =
+                recipe_builder.object("input-param-switch").unwrap();
+            let recipe_id = recipe.id.clone();
+            input_param_switch.connect_state_set(
+                clone!(@strong self.recipe_input_fields as fields,
+                        @strong self.window as window => move |_, state| {
+                    let entries = &fields[&recipe_id];
+                    for entry in entries {
+                        entry.set_css_classes(if state { &[]} else {&["flat"]});
+                        entry.set_can_focus(state);
+                        entry.set_focusable(state);
+                        entry.set_editable(state);
+                        entry.set_text("");
+                    }
+
+                    let first_editable = if state { entries.first() } else { None };
+                    window.as_ref().map(|win| win.set_focus(first_editable));
+                    first_editable.as_ref().map(|e| e.grab_focus());
+
+                    gtk4::Inhibit(false)
+                }),
+            );
 
             // Results tab stack panes
             let result_builder =
@@ -404,8 +442,11 @@ impl ApplicationController {
     }
 }
 
-fn fill_param_rows<'a, T>(group: &adw::PreferencesGroup, param_list: T)
-where
+fn fill_param_rows<'a, T>(
+    group: &adw::PreferencesGroup,
+    param_list: T,
+    mut fields: Option<&mut Vec<gtk4::Entry>>,
+) where
     T: Iterator<Item = &'a RecipeParam>,
 {
     let mut used = false;
@@ -413,16 +454,22 @@ where
         used = true;
         let row = adw::ActionRow::builder()
             .selectable(false)
+            .focusable(false)
             .title(&param.name)
             .subtitle(&param.description)
             .build();
-        row.add_suffix(
-            &gtk4::Label::builder()
-                .label(&*format!("{:?}", param.data_type))
-                .css_classes(vec!["dim-label".to_string()])
-                .build(),
-        );
+        let entry = gtk4::Entry::builder()
+            .valign(Align::Center)
+            .placeholder_text(&*format!("{:?}", param.data_type))
+            .editable(false)
+            .can_focus(false)
+            .css_classes(vec!["flat".to_string()])
+            .xalign(1f32)
+            .build();
+        row.add_suffix(&entry);
         group.add(&row);
+
+        fields.as_mut().map(|entries| entries.push(entry));
     }
     AsRef::<gtk4::Widget>::as_ref(group).set_visible(used);
 }
