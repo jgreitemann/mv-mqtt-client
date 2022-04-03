@@ -11,7 +11,7 @@ use std::sync::Arc;
 use adw::prelude::*;
 use glib::clone;
 
-use crate::app::client::Subscription;
+use crate::app::client::{Credentials, Subscription};
 use crate::cli::*;
 use app_ctrl::{ApplicationController, Message};
 use clap::Parser;
@@ -34,10 +34,11 @@ impl App {
             gio::ApplicationFlags::empty(),
         );
 
-        let client = Arc::new(RefCell::new(Client::new(&format!(
-            "tcp://{}:{}",
-            args.host, args.port
-        ))?));
+        let url = format!("tcp://{}:{}", args.host, args.port);
+        let credentials = args
+            .user
+            .and_then(|username| args.pass.map(|password| Credentials { username, password }));
+        let client = Arc::new(RefCell::new(Client::new(&url, &credentials)?));
 
         let app_ctrl = Arc::new(RefCell::new(ApplicationController::new(&application)));
 

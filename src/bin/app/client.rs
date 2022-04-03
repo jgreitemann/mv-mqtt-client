@@ -4,13 +4,18 @@ use crate::app::helpers::regex_from_mqtt_wildcard;
 use crate::cli::CLIError;
 use itertools::{zip, Itertools};
 use mqtt::{AsyncClient, DeliveryToken, Message};
-use paho_mqtt::QOS_1;
+use paho_mqtt::{ConnectOptionsBuilder, QOS_1};
 use serde::{de::DeserializeOwned, Serialize};
 use std::marker::PhantomData;
 
 pub trait MessageHandler {
     fn handle_message(&self, msg: Message);
     fn get_handled_topic(&self) -> &str;
+}
+
+pub struct Credentials {
+    pub username: String,
+    pub password: String,
 }
 
 pub struct Subscription<T: DeserializeOwned, F: Fn(T)> {
@@ -57,11 +62,19 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(host: &str) -> Result<Client, CLIError> {
-        let instance = AsyncClient::new(host).unwrap();
-        instance.connect(None).wait().or_else(|_| {
+    pub fn new(url: &str, credentials: &Option<Credentials>) -> Result<Client, CLIError> {
+        let instance = AsyncClient::new(url).unwrap();
+        let connect_opts = credentials
+            .as_ref()
+            .map(|Credentials { username, password }| {
+                ConnectOptionsBuilder::new()
+                    .user_name(username)
+                    .password(password)
+                    .finalize()
+            });
+        instance.connect(connect_opts).wait().or_else(|_| {
             Err(CLIError::CannotConnectToBroker {
-                url: host.to_string(),
+                url: url.to_string(),
             })
         })?;
         Ok(Client { instance })
