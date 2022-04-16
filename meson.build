@@ -1,14 +1,14 @@
 project('mv-mqtt-client',
         'rust',
-        version: '0.0.1')
+        version: '0.0.2')
 
 gnome = import('gnome')
 
 dependency('glib-2.0', version: '>= 2.56')
 dependency('gio-2.0', version: '>= 2.56')
 dependency('gdk-pixbuf-2.0')
-dependency('gtk4', version: '>= 4.0.0')
-dependency('libadwaita-1', version: '>= 1.0.0')
+dependency('gtk4', version: '>= 4.6.0')
+dependency('libadwaita-1', version: '>= 1.1.0')
 
 find_program('cargo', required: true)
 find_program('glib-compile-resources', required: true)
