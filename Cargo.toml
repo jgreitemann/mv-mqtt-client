@@ -26,5 +26,5 @@ name = "mvjson"
 path = "src/mvjson/lib.rs"
 
 [[bin]]
-name = "mv_mqtt_client"
+name = "mv-mqtt-client"
 path = "src/bin/main.rs"

@@ -13,6 +13,7 @@ use glib::clone;
 
 use crate::app::client::{Credentials, Subscription};
 use crate::cli::*;
+use crate::config::APP_ID;
 use app_ctrl::{ApplicationController, Message};
 use clap::Parser;
 use client::Client;
@@ -29,10 +30,7 @@ impl App {
     pub fn new() -> Result<Self, CLIError> {
         let args = Args::parse();
 
-        let application = adw::Application::new(
-            Some("io.github.jgreitemann.mv-mqtt-client"),
-            gio::ApplicationFlags::empty(),
-        );
+        let application = adw::Application::new(Some(APP_ID), gio::ApplicationFlags::empty());
 
         let url = format!("tcp://{}:{}", args.host, args.port);
         let credentials = args
