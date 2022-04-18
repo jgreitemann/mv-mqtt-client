@@ -95,8 +95,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build
-        run: cargo build --release --verbose
+      - name: Meson Configure
+        run: meson build --prefix usr/local
+
+      - name: Meson Compile
+        run: cd build && meson compile
 
       - name: Run tests
         run: cargo test --release --verbose
