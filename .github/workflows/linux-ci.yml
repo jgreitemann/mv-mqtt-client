@@ -102,4 +102,6 @@ jobs:
         run: cd build && meson compile
 
       - name: Run tests
+        env:
+          CARGO_HOME: ${{ github.workspace }}/build/cargo-home
         run: cargo test --release --verbose
