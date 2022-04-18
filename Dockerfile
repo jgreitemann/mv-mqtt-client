@@ -6,6 +6,7 @@ RUN dnf install -y \
     rust \
     cargo \
     cmake \
+    meson \
     openssl-devel \
     gtk4-devel \
     libadwaita-devel
