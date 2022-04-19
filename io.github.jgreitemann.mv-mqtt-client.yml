@@ -1,0 +1,26 @@
+app-id: io.github.jgreitemann.mv-mqtt-client
+runtime: org.gnome.Platform
+runtime-version: '42'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.llvm12
+build-options:
+  append-ld-library-path: /usr/lib/sdk/llvm12/lib
+  append-path: /usr/lib/sdk/llvm12/bin:/usr/lib/sdk/rust-stable/bin
+  build-args:
+    - --share=network
+command: mv-mqtt-client
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --share=network
+  - --device=dri
+
+modules:
+  - name: mv-mqtt-client
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: ./
+
