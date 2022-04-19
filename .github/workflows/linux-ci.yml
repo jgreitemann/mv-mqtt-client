@@ -92,6 +92,10 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
 
+    env:
+      CARGO_HOME: ${{ github.workspace }}/build/cargo-home
+      CARGO_TARGET_DIR: ${{ github.workspace }}/build/target
+
     steps:
       - uses: actions/checkout@v3
 
@@ -102,6 +106,4 @@ jobs:
         run: cd build && meson compile
 
       - name: Run tests
-        env:
-          CARGO_HOME: ${{ github.workspace }}/build/cargo-home
         run: cargo test --release --verbose
