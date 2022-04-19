@@ -13,11 +13,29 @@ jobs:
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-42
       options: --privileged
+    strategy:
+      matrix:
+        arch:
+          - x86_64
+          - aarch64
+      fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
+      - name: Install Docker
+        run: dnf -y install docker
+
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
+
+      - name: Build & upload Flatpak bundle
+        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
         with:
           bundle: mv-mqtt-client.flatpak
           manifest-path: io.github.jgreitemann.mv-mqtt-client.yml
           cache-key: flatpak-builder-${{ github.sha }}
+          arch: ${{ matrix.arch }}
