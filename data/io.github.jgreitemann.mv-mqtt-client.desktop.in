@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=MV MQTT Client
+Comment=A graphical MQTT client to monitor and control machine vision systems.
+GenericName=Machine Vision MQTT Client
+Exec=mv-mqtt-client
+Type=Application
+StartupNotify=true
+Icon=io.github.jgreitemann.mv-mqtt-client
+

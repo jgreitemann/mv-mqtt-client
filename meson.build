@@ -14,11 +14,15 @@ dependency('libadwaita-1', version: '>= 1.1.0')
 
 cargo = find_program('cargo', required: true)
 find_program('glib-compile-resources', required: true)
+desktop_file_validate = find_program('desktop-file-validate', required: false)
+appstream_util = find_program('appstream-util', required: false)
+
 
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')
 datadir = prefix / get_option('datadir')
 pkgdatadir = datadir / meson.project_name()
+iconsdir = datadir / 'icons'
 
 profile = get_option('profile')
 
