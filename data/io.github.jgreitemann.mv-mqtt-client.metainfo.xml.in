@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2022 Jonas Greitemann <jgreitemann@gmail.com> -->
+<component type="desktop-application">
+  <id>io.github.jgreitemann.mv-mqtt-client</id>
+  <metadata_license>CC0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <developer_name>Jonas Greitemann</developer_name>
+  <name>Machine Vision MQTT Client</name>
+  <summary>A graphical MQTT client to monitor and control machine vision systems.</summary>
+
+  <description>
+    <p>
+      A domain-specific MQTT client for machine vision systems which integrate with MQTT. The topics and payload format follow a specific schema which is inspired by the OPC UA Machine Vision Companion Specification (Part 1).
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.jgreitemann.mv-mqtt-client.desktop</launchable>
+  <url type="homepage">https://www.github.com/jgreitemann/mv-mqtt-client</url>
+  <url type="bugtracker">https://www.github.com/jgreitemann/mv-mqtt-client/issues</url>
+
+  <provides>
+    <binary>mv-mqtt-client</binary>
+  </provides>
+
+  <releases>
+    <release version="0.0.2" date="2022-04-27">
+      <description>
+        <p>Initial public release</p>
+      </description>
+    </release>
+  </releases>
+  <kudos>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+  <content_rating type="oars-1.1">
+  </content_rating>
+</component>
